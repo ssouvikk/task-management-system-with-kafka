@@ -4,6 +4,10 @@ const express = require('express');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const http = require('http');
+const WebSocket = require('ws');
+const url = require('url');
+
 
 const app = express();
 app.use(express.json()); // JSON রিকোয়েস্ট পাসিং
@@ -11,6 +15,82 @@ app.use(express.json()); // JSON রিকোয়েস্ট পাসিং
 // PostgreSQL সংযোগের জন্য পুল সেটআপ (DATABASE_URL .env থেকে নেওয়া)
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+});
+
+
+// HTTP সার্ভার তৈরি করা হচ্ছে
+const server = http.createServer(app);
+
+// WebSocket সার্ভার HTTP সার্ভারের সাথে যুক্ত করা হচ্ছে
+const wss = new WebSocket.Server({ server });
+
+// Map তৈরি করা হয়েছে যাতে প্রতিটি ইউজারের WebSocket connection সংরক্ষণ করা যায়
+const connectedClients = new Map();
+
+
+/**
+ * WebSocket কানেকশন ইভেন্ট
+ * - URL থেকে token নিয়ে JWT যাচাই করা হবে
+ * - বৈধ টোকেন থাকলে, ইউজারের connection Map-এ সংরক্ষণ করা হবে
+ * - অবৈধ হলে, connection বন্ধ করে দেওয়া হবে
+ */
+wss.on('connection', (ws, req) => {
+  // URL থেকে query parameters বের করা
+  const parameters = url.parse(req.url, true);
+  const token = parameters.query.token;
+
+  if (!token) {
+    ws.close(1008, 'Unauthorized: No token provided');
+    return;
+  }
+
+  let user;
+  try {
+    // JWT টোকেন যাচাই করা হচ্ছে
+    user = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    ws.close(1008, 'Unauthorized: Invalid token');
+    return;
+  }
+
+  // ইউজারের id অনুযায়ী connection সংরক্ষণ করা
+  connectedClients.set(user.id, ws);
+  console.log(`User ${user.id} connected via WebSocket.`);
+
+  // কানেকশন ক্লোজ হলে Map থেকে connection সরিয়ে ফেলা হবে
+  ws.on('close', () => {
+    connectedClients.delete(user.id);
+    console.log(`User ${user.id} disconnected.`);
+  });
+});
+
+
+
+/**
+ * API রুট: টাস্ক স্ট্যাটাস পরিবর্তনের ইভেন্ট simulate করা
+ * - এই রুটে POST রিকোয়েস্টের মাধ্যমে { userId, taskId, newStatus } পাওয়া যাবে
+ * - নির্দিষ্ট ইউজারের সাথে সংযুক্ত থাকলে, WebSocket এর মাধ্যমে নোটিফিকেশন পাঠানো হবে
+ */
+app.post('/simulate-task-update', (req, res) => {
+  const { userId, taskId, newStatus } = req.body;
+
+  // নোটিফিকেশন অবজেক্ট তৈরি করা হচ্ছে
+  const notification = {
+    event: 'taskStatusChanged',
+    taskId,
+    newStatus,
+    timestamp: new Date()
+  };
+
+  // নির্দিষ্ট ইউজারের WebSocket connection খোঁজা
+  const client = connectedClients.get(userId);
+  if (client && client.readyState === WebSocket.OPEN) {
+    // WebSocket এর মাধ্যমে নোটিফিকেশন পাঠানো
+    client.send(JSON.stringify(notification));
+    res.json({ message: 'Notification sent.' });
+  } else {
+    res.status(404).json({ message: 'User is not connected.' });
+  }
 });
 
 // In-memory store (ডেমো উদ্দেশ্যে) - প্রোডাকশনে ডাটাবেজ বা ক্যাশ ব্যবহার করা উচিত
