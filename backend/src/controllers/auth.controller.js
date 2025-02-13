@@ -1,10 +1,9 @@
-import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import { AppDataSource } from "../config/db";
 import { User } from "../models/user.entity";
 import { generateToken } from "../utils/jwt.utils";
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req, res) => {
     const { email, password } = req.body;
     const userRepository = AppDataSource.getRepository(User);
 
