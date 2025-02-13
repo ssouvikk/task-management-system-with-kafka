@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "outDir": "./dist",
+        "baseUrl": "./src",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "typeRoots": [
+            "./src/types",
+            "./node_modules/@types"
+        ]
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
