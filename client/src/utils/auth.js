@@ -1,7 +1,6 @@
-//Protected Route HOC
 // utils/auth.js
 import { useContext, useEffect } from 'react';
-import { AuthContext } from '../pages/_app';
+import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
 
 export function withAuth(Component) {

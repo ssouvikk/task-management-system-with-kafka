@@ -1,13 +1,12 @@
 // components/Navbar.js
 import { useContext } from 'react';
-import { AuthContext } from '../pages/_app';
+import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
 
 const Navbar = () => {
     const { setUser } = useContext(AuthContext);
     const router = useRouter();
 
-    // Logout ফাংশন
     const handleLogout = () => {
         localStorage.removeItem('token');
         setUser(null);
