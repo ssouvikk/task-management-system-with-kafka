@@ -1,7 +1,7 @@
 // pages/_app.js
-import '../styles/globals.css'
-import { useEffect, useState } from 'react'
-import AuthContext from '../context/AuthContext';  // পরিবর্তিত ইমপোর্ট
+import '../styles/globals.css';
+import { useEffect, useState } from 'react';
+import AuthContext from '../context/AuthContext';
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(null);
@@ -10,7 +10,6 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Production এ token verification করা দরকার
       setUser({ token });
     }
   }, []);

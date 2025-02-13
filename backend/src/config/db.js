@@ -1,12 +1,9 @@
-import "reflect-metadata";
-import { DataSource } from "typeorm";
-import dotenv from "dotenv";
+// import "reflect-metadata";
+const { DataSource } = require("typeorm");
 const { Pool } = require('pg');
+require("dotenv").config(); // .env থেকে পরিবেশ ভেরিয়েবল লোড করা
 
-
-dotenv.config();
-
-export const AppDataSource = new DataSource({
+const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DATABASE_URL,
   entities: ["src/models/*.ts"],
@@ -19,6 +16,10 @@ AppDataSource.initialize()
 
 
 // PostgreSQL সংযোগের জন্য পুল সেটআপ (DATABASE_URL .env থেকে নেওয়া)
-export const pool = new Pool({
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
+
+module.exports = {
+  pool, AppDataSource
+}

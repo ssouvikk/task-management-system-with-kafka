@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+const { Entity, PrimaryGeneratedColumn, Column } = require("typeorm");
 
 @Entity()
-export class User {
+class User {
   @PrimaryGeneratedColumn()
   id
 
@@ -14,3 +14,5 @@ export class User {
   @Column({ default: "user" })
   role
 }
+
+module.exports = { User }

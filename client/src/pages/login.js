@@ -1,6 +1,6 @@
 // pages/login.js
 import { useState, useContext } from 'react';
-import AuthContext from '../context/AuthContext';  // নতুন ইমপোর্ট পাথ
+import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
 
 const Login = () => {
@@ -11,14 +11,27 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        // ডেমো উদাহরণ: বাস্তবে API কল করে অথেনটিকেশন করবেন
-        if (email === 'user@example.com' && password === 'password') {
-            const token = 'dummy-jwt-token'; // আসল ক্ষেত্রে API থেকে JWT টোকেন নিন
-            localStorage.setItem('token', token);
-            setUser({ token });
-            router.push('/');
-        } else {
-            alert('ভুল ইমেইল বা পাসওয়ার্ড');
+        try {
+            // API রুট কল: production API base URL ব্যবহার করা হচ্ছে
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+                credentials: 'include', // Cookies পাঠানোর ক্ষেত্রে (যদি API cookies সেট করে)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                // সফল হলে, টোকেন localStorage-এ সেভ করা হচ্ছে
+                // **বিঃদ্রঃ** Production-এ HTTPOnly cookies ব্যবহার করা উচিত
+                localStorage.setItem('token', data.token);
+                setUser({ token: data.token });
+                router.push('/');
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            alert('সার্ভারের সাথে সংযোগে সমস্যা হয়েছে');
         }
     };
 

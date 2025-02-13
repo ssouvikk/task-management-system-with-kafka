@@ -1,13 +1,12 @@
-import { Kafka } from "kafkajs";
-import dotenv from "dotenv";
-dotenv.config();
+const { Kafka } = require("kafkajs");
+require("dotenv").config(); // .env থেকে পরিবেশ ভেরিয়েবল লোড করা
 
 // Kafka instance তৈরি করা হচ্ছে। 
 const kafka = new Kafka({ brokers: [process.env.KAFKA_BROKER] });
 
 // Producer তৈরি করা
-export const producer = kafka.producer();
-export const consumer = kafka.consumer({ groupId: "task_group" });
+const producer = kafka.producer();
+const consumer = kafka.consumer({ groupId: "task_group" });
 
 const connectKafka = async () => {
   await producer.connect();
@@ -16,3 +15,8 @@ const connectKafka = async () => {
 };
 
 connectKafka();
+
+
+module.exports = {
+  producer, consumer
+}

@@ -1,6 +1,6 @@
 // src/routes/auth.routes.js
-import { Router } from 'express';
-import { signup, login, refreshTokenHandler } from '../controllers/auth.controller';
+const { Router } = require('express');
+const { signup, login, refreshTokenHandler } = require('../controllers/auth.controller');
 
 const router = Router();
 
@@ -13,4 +13,4 @@ router.post('/login', login);
 // টোকেন রিফ্রেশ রুট
 router.post('/token', refreshTokenHandler);
 
-export default router;
+module.exports = router

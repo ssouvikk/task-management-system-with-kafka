@@ -1,11 +1,11 @@
-import { AppDataSource } from "../config/db";
-import { User } from "../models/user.entity";
-import bcrypt from "bcryptjs";
-import { generateToken } from "../utils/jwt.utils";
+const { AppDataSource } = require("../config/db");
+const { User } = require("../models/user.entity");
+const bcrypt = require("bcryptjs");
+const { generateToken } = require("../utils/jwt.utils");
 
-export class AuthService {
+class AuthService {
   // রেজিস্টার ফাংশন
-  static async register(email: string, password: string) {
+  static async register(email, password) {
     const userRepository = AppDataSource.getRepository(User);
     const existingUser = await userRepository.findOneBy({ email });
     if (existingUser) throw new Error("User already exists");
@@ -18,7 +18,7 @@ export class AuthService {
   }
 
   // লগইন ফাংশন
-  static async login(email: string, password: string) {
+  static async login(email, password) {
     const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOneBy({ email });
     if (!user) throw new Error("Invalid credentials");
@@ -29,3 +29,5 @@ export class AuthService {
     return generateToken({ id: user.id, role: user.role });
   }
 }
+
+module.exports = AuthService

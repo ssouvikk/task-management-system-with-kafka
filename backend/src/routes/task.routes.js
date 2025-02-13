@@ -1,12 +1,12 @@
 // src/routes/task.routes.ts
-import { Router } from "express";
-import {
+const { Router } = require("express");
+const {
     createTask,
     getTasks,
     updateTask,
     deleteTask,
-} from "../controllers/task.controller";
-import { authenticateToken } from "../middlewares/auth.middleware"; // পূর্বে তৈরি JWT middleware
+} = require("../controllers/task.controller");
+const { authenticateToken } = require("../middlewares/auth.middleware")
 
 const router = Router();
 
@@ -16,4 +16,4 @@ router.get("/", authenticateToken, getTasks);
 router.put("/:id", authenticateToken, updateTask);
 router.delete("/:id", authenticateToken, deleteTask);
 
-export default router;
+module.exports = router
