@@ -1,15 +1,12 @@
 // pages/_app.js
 import '../styles/globals.css'
-import { useEffect, useState, createContext } from 'react'
-import { useRouter } from 'next/router'
-
-// AuthContext তৈরি করা হলো
-export const AuthContext = createContext();
+import { useEffect, useState } from 'react'
+import AuthContext from '../context/AuthContext';  // পরিবর্তিত ইমপোর্ট
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(null);
 
-  // App লোড হবার পর, localStorage থেকে token চেক করা
+  // App লোড হবার পর localStorage থেকে token চেক করা
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {

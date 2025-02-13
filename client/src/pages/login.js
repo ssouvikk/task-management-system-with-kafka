@@ -1,6 +1,6 @@
 // pages/login.js
 import { useState, useContext } from 'react';
-import { AuthContext } from './_app';
+import AuthContext from '../context/AuthContext';  // নতুন ইমপোর্ট পাথ
 import { useRouter } from 'next/router';
 
 const Login = () => {
