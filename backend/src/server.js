@@ -5,10 +5,8 @@ const http = require("http");
 const WebSocket = require("ws");
 const url = require("url");
 
-// ডাটাবেজ কনফিগারেশন, রাউট ইত্যাদি আলাদা ফাইল থেকে ইম্পোর্ট করা হচ্ছে
-const { pool } = require("./config/db"); // ডাটাবেজ সংযোগ (আলাদা ফাইলে রাখা উচিত)
 const authRoutes = require("./routes/auth.routes"); // অথেনটিকেশন রাউট
-const taskRoutes = require("./routes/task.routes"); // (যদি টাস্ক রিলেটেড রাউট থাকে)
+const taskRoutes = require("./routes/task.routes"); // (টাস্ক রিলেটেড রাউট)
 
 // Express অ্যাপ তৈরি করা
 const app = express();
