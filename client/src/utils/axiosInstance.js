@@ -9,9 +9,11 @@ const instance = axios.create({
 // Request interceptor: যদি token থাকে, সেটি Authorization হেডারে যোগ করা হচ্ছে
 instance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (typeof window !== 'undefined') { // নিশ্চিত করুন window অব্যবহারযোগ্য কিনা
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
