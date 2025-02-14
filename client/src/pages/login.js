@@ -1,28 +1,34 @@
 // pages/login.js
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import axiosInstance from '../utils/axiosInstance';
 
 const Login = () => {
-    const { setUser } = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+
+    // যদি ইউজার লগ ইন থাকে, তাহলে Login পৃষ্ঠায় না গিয়ে সরাসরি redirect করুন
+    useEffect(() => {
+        if (user && user.token) {
+            router.push('/');
+        }
+    }, [user, router]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
 
         try {
-            // axiosInstance ব্যবহার করে POST API call করা হচ্ছে
             const res = await axiosInstance.post('/api/auth/login', { email, password });
             const data = res.data;
 
             if (res.status === 200) {
-                localStorage.setItem('token', data.token);
-                setUser({ token: data.token });
+                localStorage.setItem('token', data.accessToken);
+                setUser({ token: data.accessToken });
                 router.push('/');
             }
         } catch (err) {

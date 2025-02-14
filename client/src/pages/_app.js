@@ -6,11 +6,13 @@ import AuthContext from '../context/AuthContext';
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(null);
 
-  // App লোড হবার পর localStorage থেকে token চেক করা
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setUser({ token });
+    // client-side এ token চেক করুন
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        setUser({ token });
+      }
     }
   }, []);
 

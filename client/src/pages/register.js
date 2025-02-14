@@ -1,46 +1,47 @@
 // pages/register.js
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import axiosInstance from '../utils/axiosInstance';
 
 const Register = () => {
-  const { setUser } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    if (user && user.token) {
+      router.push('/');
+    }
+  }, [user, router]);
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
 
-    // ক্লায়েন্ট সাইড ভ্যালিডেশন: পাসওয়ার্ড ও কনফার্ম পাসওয়ার্ড মিলছে কিনা
     if (password !== confirmPassword) {
       setError('পাসওয়ার্ড মিলছে না');
       return;
     }
 
     try {
-      // Axios instance ব্যবহার করে API কল করা হচ্ছে
       const res = await axiosInstance.post('/api/auth/signup', { email, password });
       const data = res.data;
 
-      // যদি API কল সফল হয়
       if (res.status === 201) {
-        // সিকিউরিটির জন্য, production এ HTTPOnly cookies ব্যবহারের পরামর্শ দেওয়া হয়
         localStorage.setItem('token', data.accessToken);
         setUser({ token: data.accessToken });
-        router.push('/'); // সফল হলে ড্যাশবোর্ডে রিডাইরেক্ট করা হচ্ছে
+        router.push('/');
       }
     } catch (err) {
       console.error('Register Error:', err);
-      // যদি API থেকে error message পাওয়া যায়, তা দেখানো হবে
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else {
-        setError('সার্ভারের সাথে সংযোগে সমস্যা হয়েছে');
+        setError('সার্ভারের সাথে সংযোগে সমস্যা হয়েছে');
       }
     }
   };
