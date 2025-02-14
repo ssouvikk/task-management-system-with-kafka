@@ -1,13 +1,14 @@
 // pages/dashboard.js
 import React, { useState } from 'react';
 import { useQueryClient, useMutation } from 'react-query';
-import axios from 'axios';
 import TaskList from '../components/TaskList';
 import TaskForm from '../components/TaskForm';
 import NotificationFeed from '../components/NotificationFeed';
 import { Button } from '@/components/ui/button';
 import { withAuth } from '@/utils/auth';
 import Layout from '../components/Layout';
+import axiosInstance from '../utils/axiosInstance';
+
 
 const Dashboard = () => {
     const queryClient = useQueryClient();
@@ -16,7 +17,7 @@ const Dashboard = () => {
 
     // Create Task Mutation
     const createTaskMutation = useMutation(
-        (newTask) => axios.post('/api/tasks', newTask),
+        (newTask) => axiosInstance.post('/api/tasks', newTask),
         {
             onSuccess: () => {
                 queryClient.invalidateQueries('tasks');
@@ -27,7 +28,7 @@ const Dashboard = () => {
 
     // Update Task Mutation
     const updateTaskMutation = useMutation(
-        ({ id, updatedTask }) => axios.put(`/api/tasks/${id}`, updatedTask),
+        ({ id, updatedTask }) => axiosInstance.put(`/api/tasks/${id}`, updatedTask),
         {
             onSuccess: () => {
                 queryClient.invalidateQueries('tasks');
@@ -39,7 +40,7 @@ const Dashboard = () => {
 
     // Delete Task Mutation
     const deleteTaskMutation = useMutation(
-        (id) => axios.delete(`/api/tasks/${id}`),
+        (id) => axiosInstance.delete(`/api/tasks/${id}`),
         {
             onSuccess: () => {
                 queryClient.invalidateQueries('tasks');

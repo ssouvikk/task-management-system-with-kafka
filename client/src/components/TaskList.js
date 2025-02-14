@@ -5,9 +5,10 @@ import axios from 'axios';
 // ShadCN UI কম্পোনেন্ট হিসেবে Button, Input, Select ব্যবহার করা হয়েছে (আপনার প্রোজেক্টে ইমপোর্ট পাথ সামঞ্জস্য করুন)
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import axiosInstance from '../utils/axiosInstance';
 
 const fetchTasks = async (filters) => {
-  const { data } = await axios.get('/api/tasks', { params: filters });
+  const { data } = await axiosInstance.get('/api/tasks', { params: filters });
   return data;
 };
 
