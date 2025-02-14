@@ -7,6 +7,11 @@ const Sidebar = () => {
             <ul>
                 <li className="mb-2">
                     <Link href="/" className="text-gray-700 hover:text-blue-500">
+                        Home
+                    </Link>
+                </li>
+                <li className="mb-2">
+                    <Link href="/dashboard" className="text-gray-700 hover:text-blue-500">
                         Dashboard
                     </Link>
                 </li>

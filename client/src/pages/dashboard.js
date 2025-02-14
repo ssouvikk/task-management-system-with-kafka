@@ -6,6 +6,8 @@ import TaskList from '../components/TaskList';
 import TaskForm from '../components/TaskForm';
 import NotificationFeed from '../components/NotificationFeed';
 import { Button } from '@/components/ui/button';
+import { withAuth } from '@/utils/auth';
+import Layout from '../components/Layout';
 
 const Dashboard = () => {
     const queryClient = useQueryClient();
@@ -65,25 +67,27 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="p-4">
-            <h1 className="text-3xl font-bold mb-4">Task Management Dashboard</h1>
-            <Button
-                className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-                onClick={() => { setEditingTask(null); setShowForm(true); }}
-            >
-                নতুন টাস্ক তৈরি করুন
-            </Button>
-            {showForm && (
-                <TaskForm
-                    initialData={editingTask}
-                    onSubmit={handleFormSubmit}
-                    onCancel={() => { setShowForm(false); setEditingTask(null); }}
-                />
-            )}
-            <TaskList onEdit={handleEdit} onDelete={handleDelete} />
-            <NotificationFeed />
-        </div>
+        <Layout>
+            <div className="p-4">
+                <h1 className="text-3xl font-bold mb-4">Task Management Dashboard</h1>
+                <Button
+                    className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+                    onClick={() => { setEditingTask(null); setShowForm(true); }}
+                >
+                    নতুন টাস্ক তৈরি করুন
+                </Button>
+                {showForm && (
+                    <TaskForm
+                        initialData={editingTask}
+                        onSubmit={handleFormSubmit}
+                        onCancel={() => { setShowForm(false); setEditingTask(null); }}
+                    />
+                )}
+                <TaskList onEdit={handleEdit} onDelete={handleDelete} />
+                <NotificationFeed />
+            </div>
+        </Layout>
     );
 };
 
-export default Dashboard;
+export default withAuth(Dashboard);
