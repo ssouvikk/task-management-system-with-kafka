@@ -4,15 +4,15 @@ import { useEffect, useState } from 'react';
 import AuthContext from '../context/AuthContext';
 
 function MyApp({ Component, pageProps }) {
-  const [user, setUser] = useState(null);
+  // প্রাথমিকভাবে user state undefined রাখুন
+  const [user, setUser] = useState(undefined);
 
   useEffect(() => {
-    // client-side এ token চেক করুন
+    // client-side এ token চেক করা
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
-      if (token) {
-        setUser({ token });
-      }
+      // token থাকলে সেট করুন, না থাকলে null
+      setUser(token ? { token } : null);
     }
   }, []);
 
