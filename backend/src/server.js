@@ -1,9 +1,10 @@
-// index.js
+// server.js
 require("dotenv").config(); // .env থেকে পরিবেশ ভেরিয়েবল লোড করা
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
 const url = require("url");
+const cors = require("cors");
 
 const authRoutes = require("./routes/auth.routes"); // অথেনটিকেশন রাউট
 const taskRoutes = require("./routes/task.routes"); // (টাস্ক রিলেটেড রাউট)
@@ -11,6 +12,7 @@ const taskRoutes = require("./routes/task.routes"); // (টাস্ক রি�
 // Express অ্যাপ তৈরি করা
 const app = express();
 app.use(express.json()); // JSON রিকোয়েস্ট হ্যান্ডেলিং
+app.use(cors());
 
 // API রাউট মাউন্ট করা
 app.use("/api/auth", authRoutes);

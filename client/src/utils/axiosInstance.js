@@ -1,11 +1,12 @@
+// utils/axiosInstance.js
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL, // https://localhost:5000
-  withCredentials: true, // cookies সহ API কলের জন্য
+  baseURL: process.env.NEXT_PUBLIC_API_URL, // API বেস URL, যেমন: http://localhost:5000
+  // withCredentials: true, // যদি cookies প্রয়োজন হয়
 });
 
-// Request interceptor: টোকেন যোগ করা (যদি localStorage-এ থাকে)
+// Request interceptor: যদি token থাকে, সেটি Authorization হেডারে যোগ করা হচ্ছে
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -16,8 +17,5 @@ instance.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
-// Response interceptor: Token refresh logic (যদি প্রয়োজন হয়)
-// instance.interceptors.response.use(...)
 
 export default instance;
