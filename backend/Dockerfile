@@ -10,7 +10,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Step 4: ডিপেনডেন্সি ইনস্টল করুন
-RUN npm install --legacy-peer-deps
+RUN npm install
 
 # Step 5: সোর্স কোড কপি করুন
 COPY . .
