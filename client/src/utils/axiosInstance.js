@@ -9,7 +9,7 @@ const instance = axios.create({
 // Request interceptor: যদি token থাকে, সেটি Authorization হেডারে যোগ করা হচ্ছে
 instance.interceptors.request.use(
   (config) => {
-    if (typeof window !== 'undefined') { // নিশ্চিত করুন window অব্যবহারযোগ্য কিনা
+    if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -18,6 +18,22 @@ instance.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// Response interceptor: 403 status code পেলে স্বয়ংক্রিয়ভাবে লগ আউট করা হবে
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 403) {
+      // Token মুছে দিন
+      localStorage.removeItem('token');
+      // যদি window অবজেক্ট পাওয়া যায়, তাহলে লগইন পৃষ্ঠায় রিডাইরেক্ট করুন
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default instance;
