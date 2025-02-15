@@ -14,10 +14,6 @@ const AppDataSource = new DataSource({
   synchronize: true, // Development-এর জন্য, প্রোডাকশনে migration ব্যবহার করুন
 });
 
-AppDataSource.initialize()
-  .then(() => console.log("📦 PostgreSQL Connected!"))
-  .catch((error) => console.error("❌ Database Connection Error:", error));
-
 
 // PostgreSQL সংযোগের জন্য পুল সেটআপ (DATABASE_URL .env থেকে নেওয়া)
 const pool = new Pool({

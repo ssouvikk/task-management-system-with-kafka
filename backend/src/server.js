@@ -12,6 +12,7 @@ const { connectKafka } = require("./config/kafka");
 const connectedClients = require("./config/socketClients");
 const authRoutes = require("./routes/auth.routes"); // অথেনটিকেশন রাউট
 const taskRoutes = require("./routes/task.routes"); // (টাস্ক রিলেটেড রাউট)
+const { AppDataSource } = require("./config/db");
 
 // Express অ্যাপ তৈরি করা
 const app = express();
@@ -91,6 +92,11 @@ app.post('/simulate-task-update', (req, res) => {
 
 
 const startServer = async () => {
+  // ডাটাবেজ কানেকশন initialize করুন
+  await AppDataSource.initialize();
+  console.log("PostgreSQL Connected!")
+
+  // Kafka ও Consumer সংযোগ করুন
   await connectKafka();
   await startConsumer();
 

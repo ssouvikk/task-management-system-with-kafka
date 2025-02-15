@@ -3,10 +3,12 @@ import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import axiosInstance from '../utils/axiosInstance';
+import Link from 'next/link';
 
 const Register = () => {
   const { user, setUser } = useContext(AuthContext);
   const router = useRouter();
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,9 +30,9 @@ const Register = () => {
     }
 
     try {
-      const res = await axiosInstance.post('/api/auth/signup', { email, password });
+      // username, email ও password পাঠানো হচ্ছে
+      const res = await axiosInstance.post('/api/auth/signup', { username, email, password });
       const data = res.data;
-
       if (res.status === 201) {
         localStorage.setItem('token', data.accessToken);
         setUser({ token: data.accessToken });
@@ -47,10 +49,21 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       <form onSubmit={handleRegister} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
         <h2 className="text-2xl mb-4 text-center">রেজিস্টার করুন</h2>
         {error && <div className="mb-4 text-red-500">{error}</div>}
+        <div className="mb-4">
+          <label className="block text-gray-700">ইউজারনেম</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full p-2 border rounded"
+            placeholder="আপনার ইউজারনেম দিন"
+            required
+          />
+        </div>
         <div className="mb-4">
           <label className="block text-gray-700">ইমেইল</label>
           <input
@@ -86,6 +99,12 @@ const Register = () => {
           রেজিস্টার
         </button>
       </form>
+      <p className="mt-4">
+        আগে থেকে একাউন্ট আছে?{" "}
+        <Link href="/login" className="text-blue-500 hover:underline">
+          লগইন করুন
+        </Link>
+      </p>
     </div>
   );
 };
