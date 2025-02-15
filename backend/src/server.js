@@ -55,6 +55,7 @@ wss.on("connection", (ws, req) => {
 
   ws.on("close", () => {
     // কানেকশন ক্লোজ হলে, প্রয়োজনীয় ক্লিনআপ করুন
+    connectedClients.delete(user.id);
     console.log(`User ${user.id} disconnected.`);
   });
 });
