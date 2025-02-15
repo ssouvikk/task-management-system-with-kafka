@@ -1,6 +1,27 @@
 // src/controllers/task.controller.ts
 const { AppDataSource } = require("../config/db");
 const { Task, TaskPriority, TaskStatus } = require("../models/task.entity");
+const { producer } = require("../config/kafka");
+
+
+const sendTaskUpdateToKafka = async (event, task) => {
+    await producer.send({
+        topic: 'task-updates',
+        messages: [
+            {
+                key: String(task.id),
+                value: JSON.stringify({
+                    event,
+                    taskId: task.id,
+                    title: task.title,
+                    status: task.status,
+                    updatedAt: new Date(),
+                }),
+            },
+        ],
+    });
+};
+
 
 module.exports = {
 
@@ -34,6 +55,10 @@ module.exports = {
             });
 
             await taskRepository.save(newTask);
+
+            // Kafka তে মেসেজ পাঠানো
+            await sendTaskUpdateToKafka("taskCreated", newTask);
+
             res.status(201).json(newTask);
         } catch (error) {
             console.error("Error in createTask:", error);
@@ -112,6 +137,10 @@ module.exports = {
             if (dueDate !== undefined) task.dueDate = dueDate ? new Date(dueDate) : null;
 
             await taskRepository.save(task);
+
+            // Kafka তে মেসেজ পাঠানো
+            await sendTaskUpdateToKafka("taskUpdated", task);
+
             res.status(200).json(task);
         } catch (error) {
             console.error("Error in updateTask:", error);
@@ -140,6 +169,10 @@ module.exports = {
             }
 
             await taskRepository.remove(task);
+
+            // Kafka তে মেসেজ পাঠানো
+            await sendTaskUpdateToKafka("taskDeleted", { id: taskId });
+
             res.status(200).json({ message: "Task deleted successfully" });
         } catch (error) {
             console.error("Error in deleteTask:", error);

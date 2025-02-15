@@ -1,3 +1,4 @@
+//src/config/kafka.js
 const { Kafka } = require("kafkajs");
 require("dotenv").config(); // .env থেকে পরিবেশ ভেরিয়েবল লোড করা
 
@@ -17,6 +18,4 @@ const connectKafka = async () => {
 connectKafka();
 
 
-module.exports = {
-  producer, consumer
-}
+module.exports = { kafka, producer, consumer, connectKafka };

@@ -1,4 +1,4 @@
-// server.js
+// src/server.js
 require("dotenv").config(); // .env থেকে পরিবেশ ভেরিয়েবল লোড করা
 const express = require("express");
 const http = require("http");
@@ -6,6 +6,8 @@ const WebSocket = require("ws");
 const url = require("url");
 const cors = require("cors");
 
+const startConsumer = require("./services/taskConsumer");
+const { connectKafka } = require("./config/kafka");
 const authRoutes = require("./routes/auth.routes"); // অথেনটিকেশন রাউট
 const taskRoutes = require("./routes/task.routes"); // (টাস্ক রিলেটেড রাউট)
 
@@ -88,8 +90,15 @@ app.post('/simulate-task-update', (req, res) => {
   }
 });
 
-// সার্ভার স্টার্ট করা হচ্ছে
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+const startServer = async () => {
+  await connectKafka();
+  await startConsumer();
+
+  const PORT = process.env.PORT || 5000;
+  server.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+  });
+};
+
+startServer();
