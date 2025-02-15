@@ -6,11 +6,12 @@ require("dotenv").config(); // .env থেকে পরিবেশ ভেরি
 
 const { User } = require("../models/user.entity");
 const { Task } = require("../models/task.entity");
+const { TaskHistory } = require("../models/taskHistory.entity");
 
 const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DATABASE_URL,
-  entities: [User, Task],
+  entities: [User, Task, TaskHistory],
   synchronize: true, // Development-এর জন্য, প্রোডাকশনে migration ব্যবহার করুন
 });
 
