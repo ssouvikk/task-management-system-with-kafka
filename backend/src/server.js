@@ -5,6 +5,7 @@ const http = require("http");
 const WebSocket = require("ws");
 const url = require("url");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 
 const startConsumer = require("./services/taskConsumer");
 const { connectKafka } = require("./config/kafka");
@@ -41,7 +42,6 @@ wss.on("connection", (ws, req) => {
   let user;
   try {
     // JWT টোকেন যাচাই করা হচ্ছে
-    const jwt = require("jsonwebtoken");
     user = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
     ws.close(1008, "Unauthorized: Invalid token");
