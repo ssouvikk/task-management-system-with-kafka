@@ -6,8 +6,10 @@ const NotificationFeed = () => {
     const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
-        // WebSocket কানেকশন (আপনার সার্ভারের URL অনুযায়ী ঠিক করুন)
-        const socket = new WebSocket('ws://localhost:5000');
+        // localStorage থেকে token নিন
+        const token = localStorage.getItem('token');
+        // Token সহ WebSocket URL
+        const socket = new WebSocket(`ws://localhost:5000?token=${token}`);
 
         socket.onopen = () => {
             console.log('WebSocket কানেক্টেড হয়েছে।');
