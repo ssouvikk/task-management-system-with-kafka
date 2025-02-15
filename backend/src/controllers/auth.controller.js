@@ -16,7 +16,7 @@ module.exports = {
      */
     signup: async (req, res) => {
         try {
-            const { email, password } = req.body;
+            const { email, password, username } = req.body;
             const userRepository = AppDataSource.getRepository(User);
 
             // ইউজার ইতিমধ্যে আছে কিনা যাচাই করা
@@ -25,13 +25,18 @@ module.exports = {
                 return res.status(400).json({ message: 'ইউজার পূর্বেই বিদ্যমান' });
             }
 
+            const existingUsername = await userRepository.findOne({ where: { username } });
+            if (existingUsername) {
+                return res.status(400).json({ message: 'username is already used' });
+            }
+
             // পাসওয়ার্ড হ্যাশ করা
             const hashedPassword = await bcrypt.hash(password, 10);
-            const newUser = userRepository.create({ email, password: hashedPassword });
+            const newUser = userRepository.create({ email, password: hashedPassword, username });
             await userRepository.save(newUser);
 
             // JWT টোকেন জেনারেশন
-            const tokenPayload = { id: newUser.id, email: newUser.email };
+            const tokenPayload = { id: newUser.id, email: newUser.email, username };
             const accessToken = generateAccessToken(tokenPayload);
             const refreshToken = generateRefreshToken(tokenPayload);
 

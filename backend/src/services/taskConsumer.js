@@ -13,13 +13,13 @@ const startConsumer = async () => {
             const taskUpdate = JSON.parse(message.value.toString());
             console.log(`Received task update:`, taskUpdate);
 
-            // Task history টেবিলে লগ সংরক্ষণ করা
             try {
                 const historyRepository = AppDataSource.getRepository(TaskHistory);
                 const newHistory = historyRepository.create({
                     taskId: taskUpdate.taskId,
-                    event: taskUpdate.event,
-                    status: taskUpdate.status,
+                    change_type: taskUpdate.event, // event এর পরিবর্তে change_type
+                    previous_value: taskUpdate.previous_value, // পূর্বের মান, যদি থাকে
+                    new_value: taskUpdate.new_value,         // নতুন মান
                     timestamp: new Date(),
                 });
                 await historyRepository.save(newHistory);
@@ -27,7 +27,6 @@ const startConsumer = async () => {
                 console.error("Error saving task history:", err);
             }
 
-            // সংশ্লিষ্ট ইউজারের WebSocket এর মাধ্যমে নোটিফাই করা
             const client = connectedClients.get(taskUpdate.userId);
             // if (client && client.readyState === client.OPEN) {
             if (client && client.readyState === WebSocket.OPEN) {
@@ -36,5 +35,6 @@ const startConsumer = async () => {
         },
     });
 };
+
 
 module.exports = startConsumer;
