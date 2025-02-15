@@ -8,6 +8,7 @@ const cors = require("cors");
 
 const startConsumer = require("./services/taskConsumer");
 const { connectKafka } = require("./config/kafka");
+const connectedClients = require("./config/socketClients");
 const authRoutes = require("./routes/auth.routes"); // অথেনটিকেশন রাউট
 const taskRoutes = require("./routes/task.routes"); // (টাস্ক রিলেটেড রাউট)
 
@@ -25,9 +26,6 @@ const server = http.createServer(app);
 
 // WebSocket সার্ভার সেটআপ করা হচ্ছে
 const wss = new WebSocket.Server({ server });
-
-// Map তৈরি করা হয়েছে যাতে প্রতিটি ইউজারের WebSocket connection সংরক্ষণ করা যায়
-const connectedClients = new Map();
 
 // WebSocket কানেকশন হ্যান্ডলার
 wss.on("connection", (ws, req) => {

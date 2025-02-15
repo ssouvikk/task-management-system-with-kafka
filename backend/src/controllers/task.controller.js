@@ -13,6 +13,7 @@ const sendTaskUpdateToKafka = async (event, task) => {
                 value: JSON.stringify({
                     event,
                     taskId: task.id,
+                    userId: task.createdBy.id, // এখানে userId যোগ করুন
                     title: task.title,
                     status: task.status,
                     updatedAt: new Date(),
