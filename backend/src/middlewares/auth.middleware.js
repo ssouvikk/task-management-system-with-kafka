@@ -1,4 +1,4 @@
-//src/middlewares/auth.middleware.js
+// src/middlewares/auth.middleware.js
 const jwt = require("jsonwebtoken");
 const { AppDataSource } = require("../config/db");
 const { User } = require("../models/user.entity");
@@ -11,10 +11,10 @@ module.exports = {
         }
 
         try {
-            // Token verify করে decoded ডেটা পাওয়া যাচ্ছে
+            // Verifying the token to obtain decoded data
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            // decoded থেকে id নিয়ে ইউজারের সম্পূর্ণ তথ্য ডাটাবেজ থেকে খুঁজে বের করুন
+            // Retrieve complete user information from the database using the id from decoded token
             const userRepository = AppDataSource.getRepository(User);
             const user = await userRepository.findOne({ where: { id: decoded.id } });
 
@@ -22,7 +22,7 @@ module.exports = {
                 return res.status(404).json({ message: "User not found", data: null });
             }
 
-            // পূর্ণ ইউজার ডেটা req.user-এ সেট করুন
+            // Set the full user data to req.user
             req.user = user;
             next();
         } catch (error) {

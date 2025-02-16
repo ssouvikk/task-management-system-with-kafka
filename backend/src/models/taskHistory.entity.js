@@ -14,14 +14,14 @@ const TaskHistory = new EntitySchema({
       type: "int",
     },
     change_type: {
-      type: "varchar", // উদাহরণস্বরূপ: 'status_change', 'title_change' ইত্যাদি
+      type: "varchar", // For example: 'status_change', 'title_change', etc.
     },
     previous_value: {
-      type: "json",  // পূর্ববর্তী মান JSON হিসেবে সংরক্ষণ
+      type: "json",  // Store the previous value as JSON
       nullable: true,
     },
     new_value: {
-      type: "json",  // নতুন মান JSON হিসেবে সংরক্ষণ
+      type: "json",  // Store the new value as JSON
       nullable: true,
     },
     timestamp: {
@@ -29,7 +29,7 @@ const TaskHistory = new EntitySchema({
       createDate: true,
     },
   },
-  // Relation যোগ করতে চাইলে, উদাহরণস্বরূপ task_id এর জন্য Task Entity রিলেশন তৈরি করা যেতে পারে
+  // If needed, a relation can be added, for example, to create a relation for task_id with the Task entity
 });
 
 module.exports = { TaskHistory };

@@ -2,8 +2,8 @@
 const { EntitySchema } = require("typeorm");
 
 const User = new EntitySchema({
-  name: "User", // Entity এর নাম
-  target: "User", // Model এর নাম
+  name: "User", // Name of the entity
+  target: "User", // Name of the model
   columns: {
     id: {
       primary: true,
@@ -12,7 +12,7 @@ const User = new EntitySchema({
     },
     username: {
       type: "varchar",
-      unique: true, // প্রতিটি ইউজারের username ইউনিক হবে
+      unique: true, // Each user's username will be unique
     },
     email: {
       type: "varchar",
@@ -36,3 +36,4 @@ const User = new EntitySchema({
 });
 
 module.exports = { User };
+v

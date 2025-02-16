@@ -1,6 +1,7 @@
+// src/models/task.entity.js
 const { EntitySchema } = require("typeorm");
 
-// Task এর প্রাধান্য (Priority) ও স্ট্যাটাস (Status) এর জন্য enum এর মত ভ্যালুসমূহ
+// Enum values for Task Priority and Status
 const TaskPriority = {
   LOW: "Low",
   MEDIUM: "Medium",
@@ -46,23 +47,23 @@ const Task = new EntitySchema({
     assignedTo: {
       type: "varchar",
       nullable: true,
-    },    
+    },
     createdAt: {
       type: "timestamp",
-      createDate: true, // স্বয়ংক্রিয়ভাবে তৈরি হওয়ার তারিখ
+      createDate: true, // Automatically set creation date
     },
     updatedAt: {
       type: "timestamp",
-      updateDate: true, // স্বয়ংক্রিয়ভাবে আপডেট হওয়ার তারিখ
+      updateDate: true, // Automatically set update date
     },
   },
   relations: {
-    // Task এর মালিক (creator) কে User এর সাথে relation করা হয়েছে
+    // The task's creator is related to the User entity
     createdBy: {
       target: "User",
       type: "many-to-one",
-      joinColumn: true, // foreign key column তৈরি করবে
-      onDelete: "CASCADE", // ইউজার ডিলিট হলে তার Task গুলোও ডিলিট হবে
+      joinColumn: true, // Will create a foreign key column
+      onDelete: "CASCADE", // If the user is deleted, their tasks will also be deleted
     },
   },
 });
