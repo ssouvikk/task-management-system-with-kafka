@@ -1,4 +1,4 @@
-// components/NotificationFeed.js
+// src/components/NotificationFeed.js
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -6,9 +6,7 @@ const NotificationFeed = () => {
     const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
-        // localStorage থেকে token নিন
         const token = localStorage.getItem('token');
-        // Token সহ WebSocket URL
         const socket = new WebSocket(`ws://localhost:5000?token=${token}`);
 
         socket.onopen = () => {
@@ -35,12 +33,12 @@ const NotificationFeed = () => {
             {notifications.map((notif, index) => (
                 <Card key={index} className="mb-2">
                     <CardHeader>
-                        <CardTitle>{notif.event}</CardTitle>
+                        <CardTitle>{notif.change_type}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p>Task ID: {notif.taskId}</p>
-                        <p>New Status: {notif.newStatus}</p>
-                        <p>{new Date(notif.timestamp).toLocaleString()}</p>
+                        <p>New Status: {notif.new_value ? notif.new_value.status : '-'}</p>
+                        <p>{new Date(notif.updatedAt).toLocaleString()}</p>
                     </CardContent>
                 </Card>
             ))}

@@ -151,6 +151,7 @@ module.exports = {
                 priority: task.priority,
                 status: task.status,
                 dueDate: task.dueDate,
+                assignedTo: task.assignedTo,
             };
 
             // টাস্কের পরিবর্তনসমূহ আপডেট করা

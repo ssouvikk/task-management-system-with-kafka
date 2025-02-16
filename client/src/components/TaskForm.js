@@ -1,4 +1,4 @@
-// components/TaskForm.js
+// src/components/TaskForm.js
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,8 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
         description: '',
         priority: 'Medium',
         status: 'To Do',
-        dueDate: ''
+        dueDate: '',
+        assignedTo: ''  // নতুন ফিল্ড
     });
 
     useEffect(() => {
@@ -20,7 +21,8 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
                 description: initialData.description,
                 priority: initialData.priority,
                 status: initialData.status,
-                dueDate: initialData.dueDate ? initialData.dueDate.split('T')[0] : ''
+                dueDate: initialData.dueDate ? initialData.dueDate.split('T')[0] : '',
+                assignedTo: initialData.assignedTo || ''  // পূর্বের মান, যদি থাকে
             });
         }
     }, [initialData]);
@@ -63,6 +65,10 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
             <div className="mb-2">
                 <label className="block mb-1">Due Date</label>
                 <Input type="date" name="dueDate" value={formData.dueDate} onChange={handleChange} />
+            </div>
+            <div className="mb-2">
+                <label className="block mb-1">অ্যাসাইন করা (Assigned To)</label>
+                <Input name="assignedTo" value={formData.assignedTo} onChange={handleChange} placeholder="Assigned User" />
             </div>
             <div className="mt-4">
                 <Button type="submit">সেভ করুন</Button>

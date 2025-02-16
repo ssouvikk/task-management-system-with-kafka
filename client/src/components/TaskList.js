@@ -1,11 +1,9 @@
-// components/TaskList.js
+// src/components/TaskList.js
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import axios from 'axios';
-// ShadCN UI কম্পোনেন্ট হিসেবে Button, Input, Select ব্যবহার করা হয়েছে (আপনার প্রোজেক্টে ইমপোর্ট পাথ সামঞ্জস্য করুন)
+import axiosInstance from '../utils/axiosInstance';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import axiosInstance from '../utils/axiosInstance';
 
 const fetchTasks = async (filters) => {
   const { data } = await axiosInstance.get('/api/tasks', { params: filters });
@@ -19,7 +17,6 @@ const TaskList = ({ onEdit, onDelete }) => {
     dueDate: ''
   });
 
-  // React Query এর useQuery হুক ব্যবহার করে টাস্ক ডেটা আনছে
   const { data: tasks, refetch } = useQuery(['tasks', filters], () => fetchTasks(filters));
 
   const handleFilterChange = (e) => {
@@ -74,6 +71,7 @@ const TaskList = ({ onEdit, onDelete }) => {
             <th className="p-2 text-left">প্রাধান্য</th>
             <th className="p-2 text-left">স্ট্যাটাস</th>
             <th className="p-2 text-left">Due Date</th>
+            <th className="p-2 text-left">অ্যাসাইন করা</th>
             <th className="p-2 text-left">ক্রিয়া</th>
           </tr>
         </thead>
@@ -87,6 +85,7 @@ const TaskList = ({ onEdit, onDelete }) => {
               <td className="p-2">
                 {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}
               </td>
+              <td className="p-2">{task.assignedTo || '-'}</td>
               <td className="p-2 space-x-2">
                 <Button onClick={() => onEdit(task)}>এডিট</Button>
                 <Button variant="destructive" onClick={() => onDelete(task.id)}>ডিলিট</Button>
