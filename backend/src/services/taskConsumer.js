@@ -2,8 +2,8 @@
 const { consumer } = require('../config/kafka');
 const connectedClients = require('../config/socketClients');
 const { AppDataSource } = require('../config/db');
-const { TaskHistory } = require('../models/taskHistory.entity'); // TaskHistory মডেল ফাইল অনুযায়ী
-const WebSocket = require("ws")
+const { TaskHistory } = require('../models/taskHistory.entity');
+const WebSocket = require("ws");
 
 const startConsumer = async () => {
     await consumer.subscribe({ topic: 'task-updates', fromBeginning: true });
@@ -17,9 +17,9 @@ const startConsumer = async () => {
                 const historyRepository = AppDataSource.getRepository(TaskHistory);
                 const newHistory = historyRepository.create({
                     taskId: taskUpdate.taskId,
-                    change_type: taskUpdate.event, // event এর পরিবর্তে change_type
-                    previous_value: taskUpdate.previous_value, // পূর্বের মান, যদি থাকে
-                    new_value: taskUpdate.new_value,         // নতুন মান
+                    change_type: taskUpdate.change_type, // পরিবর্তন: taskUpdate.event এর পরিবর্তে taskUpdate.change_type ব্যবহার করুন
+                    previous_value: taskUpdate.previous_value,
+                    new_value: taskUpdate.new_value,
                     timestamp: new Date(),
                 });
                 await historyRepository.save(newHistory);
@@ -35,6 +35,5 @@ const startConsumer = async () => {
         },
     });
 };
-
 
 module.exports = startConsumer;

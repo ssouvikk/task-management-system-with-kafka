@@ -123,7 +123,7 @@ const TaskList = ({ onEdit, onDelete }) => {
       </table>
 
       {/* Pagination Controls */}
-      <div className="flex justify-between items-center mt-4">
+      {tasks.length > 0 && <div className="flex justify-between items-center mt-4">
         <Button
           onClick={() => handlePageChange(pageNumber - 1)}
           disabled={pageNumber === 1}
@@ -139,7 +139,7 @@ const TaskList = ({ onEdit, onDelete }) => {
         >
           পরবর্তী
         </Button>
-      </div>
+      </div>}
     </div>
   );
 };
