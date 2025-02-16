@@ -3,18 +3,18 @@ const { AppDataSource } = require('./src/config/db');
 const { User } = require('./src/models/user.entity');
 const bcrypt = require('bcryptjs');
 
-// we should always use generated hashed password here instead of generating here (for now m generating here)
-const appAdminUser = { email: "admin@user.com", password: "P@$$w0rd" }
+// We should always use generated hashed password here instead of generating here (for now generating here)
+const appAdminUser = { email: "admin@user.com", password: "P@$$w0rd" };
 
 async function seedDatabase() {
     await AppDataSource.initialize();
     const userRepository = AppDataSource.getRepository(User);
 
-    // চেক করুন admin user ইতিমধ্যে আছে কিনা
+    // Check if admin user already exists
     const adminExists = await userRepository.findOne({ where: { email: appAdminUser.email } });
 
     if (!adminExists) {
-        // we should always use generated hashed password here instead of generating here (for now m generating here)
+        // We should always use generated hashed password here instead of generating here (for now generating here)
         const hashedPassword = await bcrypt.hash(appAdminUser.password, 10);
         const adminUser = userRepository.create({
             username: 'admin',

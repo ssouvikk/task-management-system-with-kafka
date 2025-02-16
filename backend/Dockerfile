@@ -1,22 +1,22 @@
 # backend/Dockerfile
 
-# Step 1: Node image থেকে শুরু (উদাহরণস্বরূপ, node:20)
+# Step 1: Start from a Node image (e.g., node:20)
 FROM node:20.11.1
 
-# Step 2: অ্যাপের কাজের ডিরেক্টরি তৈরি করুন
+# Step 2: Create the working directory for the app
 WORKDIR /usr/src/app
 
-# Step 3: package.json ও package-lock.json (অথবা yarn.lock) কপি করুন
+# Step 3: Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
 
-# Step 4: ডিপেনডেন্সি ইনস্টল করুন
+# Step 4: Install dependencies
 RUN npm install
 
-# Step 5: সোর্স কোড কপি করুন
+# Step 5: Copy source code
 COPY . .
 
-# Step 6: অ্যাপের পোর্ট (উদাহরণস্বরূপ, 5000) এক্সপোজ করুন
+# Step 6: Expose the app's port (e.g., 5000)
 EXPOSE 5000
 
-# Step 7: অ্যাপ চালু করুন
+# Step 7: Start the app
 CMD ["sh", "-c", "sleep 5 && node seed.js && npm run dev"]
