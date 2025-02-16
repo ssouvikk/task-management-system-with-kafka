@@ -2,6 +2,7 @@
 import { useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
     const { setUser } = useContext(AuthContext);
@@ -11,6 +12,7 @@ const Navbar = () => {
         localStorage.removeItem('token');
         setUser(null);
         router.push('/login');
+        toast('Logged Out successfully');
     };
 
     return (

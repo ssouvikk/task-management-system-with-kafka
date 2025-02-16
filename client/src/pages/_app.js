@@ -32,6 +32,7 @@ function MyApp({ Component, pageProps }) {
     <AuthContext.Provider value={{ user, setUser }}>
       <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />
+        <ToastContainer />
       </QueryClientProvider>
     </AuthContext.Provider>
   );
