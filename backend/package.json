@@ -5,6 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "typeorm migration:run",
+    "start": "npm run migrate && node src/server.js",
     "dev": "nodemon src/server.js"
   },
   "keywords": [],
