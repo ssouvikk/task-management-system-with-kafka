@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import Select from '@/components/ui/Select'; // নতুন Select component import
+import Select from '@/components/ui/Select'; // Import new Select component
 
-// priority এবং status এর জন্য options array
+// Options array for priority and status
 const priorityOptions = [
     { value: 'Low', label: 'Low' },
     { value: 'Medium', label: 'Medium' },
@@ -50,11 +50,10 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
         onSubmit(formData);
     };
 
-
     return (
         <form onSubmit={handleSubmit} className="p-6 border rounded-lg bg-white shadow-md mb-6">
             <div className="mb-4">
-                <label className="block text-gray-700 mb-2">শিরোনাম</label>
+                <label className="block text-gray-700 mb-2">Title</label>
                 <Input
                     name="title"
                     value={formData.title}
@@ -64,7 +63,7 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 mb-2">বিবরণ</label>
+                <label className="block text-gray-700 mb-2">Description</label>
                 <Textarea
                     name="description"
                     value={formData.description}
@@ -73,7 +72,7 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 mb-2">প্রাধান্য</label>
+                <label className="block text-gray-700 mb-2">Priority</label>
                 <Select
                     name="priority"
                     value={formData.priority}
@@ -83,7 +82,7 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 mb-2">স্ট্যাটাস</label>
+                <label className="block text-gray-700 mb-2">Status</label>
                 <Select
                     name="status"
                     value={formData.status}
@@ -103,7 +102,7 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 mb-2">অ্যাসাইন করা (Assigned To)</label>
+                <label className="block text-gray-700 mb-2">Assigned To</label>
                 <Input
                     name="assignedTo"
                     value={formData.assignedTo}
@@ -113,10 +112,10 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
                 />
             </div>
             <div className="flex justify-end mt-6">
-                <Button type="submit" className="mr-2">সেভ করুন</Button>
+                <Button type="submit" className="mr-2">Save</Button>
                 {onCancel && (
                     <Button variant="outline" onClick={onCancel} className="ml-2">
-                        ক্যান্সেল
+                        Cancel
                     </Button>
                 )}
             </div>

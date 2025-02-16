@@ -10,7 +10,7 @@ const Sidebar = () => {
                         Dashboard
                     </Link>
                 </li>
-                {/* অন্যান্য লিঙ্ক যোগ করুন */}
+                {/* Add other links */}
             </ul>
         </aside>
     )

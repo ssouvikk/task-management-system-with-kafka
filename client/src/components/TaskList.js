@@ -1,21 +1,21 @@
+// src/components/TaskList.js
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import axiosInstance from '../utils/axiosInstance';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import Select from '@/components/ui/Select'; // আমাদের নতুন reusable Select import
+import Select from '@/components/ui/Select'; // Import our new reusable Select
 
-
-// Select component-এর জন্য options গুলি:
+// Options for the Select components:
 const priorityOptions = [
-  { value: '', label: 'সকল প্রাধান্য' },
+  { value: '', label: 'All Priorities' },
   { value: 'Low', label: 'Low' },
   { value: 'Medium', label: 'Medium' },
   { value: 'High', label: 'High' },
 ];
 
 const statusOptions = [
-  { value: '', label: 'সকল স্ট্যাটাস' },
+  { value: '', label: 'All Statuses' },
   { value: 'To Do', label: 'To Do' },
   { value: 'In Progress', label: 'In Progress' },
   { value: 'Done', label: 'Done' },
@@ -28,10 +28,10 @@ const perPageOptions = [
   { value: 100, label: '100' },
 ];
 
-// API থেকে tasks fetch করার function
+// Function to fetch tasks from the API
 const fetchTasks = async (filters) => {
   const { data } = await axiosInstance.get('/api/tasks', { params: filters });
-  // API response-এ data: { tasks, total, pageNumber, perPage } থাকে
+  // The API response contains data: { tasks, total, pageNumber, perPage }
   return data.data;
 };
 
@@ -65,14 +65,13 @@ const TaskList = ({ onEdit, onDelete }) => {
 
   const handlePerPageChange = (e) => {
     setPerPage(Number(e.target.value));
-    // perPage পরিবর্তনের সাথে পৃষ্ঠা ১ থেকে শুরু হবে
+    // When perPage changes, start from page 1
     setFilters({ ...filters, pageNumber: 1 });
   };
 
-
   return (
     <div className="mt-6">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">টাস্ক তালিকা</h2>
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Task List</h2>
       <div className="flex flex-wrap gap-2 mb-6">
         <Select
           name="priority"
@@ -94,20 +93,20 @@ const TaskList = ({ onEdit, onDelete }) => {
           placeholder="Due Date"
           className="border p-2 rounded"
         />
-        <Button onClick={refetch}>ফিল্টার করুন</Button>
+        <Button onClick={refetch}>Filter</Button>
       </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse bg-white shadow">
           <thead>
             <tr className="bg-gray-200">
-              <th className="p-3 text-left text-gray-800">শিরোনাম</th>
-              <th className="p-3 text-left text-gray-800">বিবরণ</th>
-              <th className="p-3 text-left text-gray-800">প্রাধান্য</th>
-              <th className="p-3 text-left text-gray-800">স্ট্যাটাস</th>
+              <th className="p-3 text-left text-gray-800">Title</th>
+              <th className="p-3 text-left text-gray-800">Description</th>
+              <th className="p-3 text-left text-gray-800">Priority</th>
+              <th className="p-3 text-left text-gray-800">Status</th>
               <th className="p-3 text-left text-gray-800">Due Date</th>
-              <th className="p-3 text-left text-gray-800">অ্যাসাইন করা</th>
-              <th className="p-3 text-left text-gray-800">ক্রিয়া</th>
+              <th className="p-3 text-left text-gray-800">Assigned To</th>
+              <th className="p-3 text-left text-gray-800">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -122,9 +121,9 @@ const TaskList = ({ onEdit, onDelete }) => {
                 </td>
                 <td className="p-3 text-gray-700">{task.assignedTo || '-'}</td>
                 <td className="p-3 space-x-2">
-                  <Button onClick={() => onEdit(task)}>এডিট</Button>
+                  <Button onClick={() => onEdit(task)}>Edit</Button>
                   <Button variant="destructive" onClick={() => onDelete(task.id)}>
-                    ডিলিট
+                    Delete
                   </Button>
                 </td>
               </tr>
@@ -133,11 +132,11 @@ const TaskList = ({ onEdit, onDelete }) => {
         </table>
       </div>
 
-      {/* Pagination এবং perPage নির্বাচন */}
+      {/* Pagination and perPage selection */}
       {tasks.length > 0 && (
         <div className="flex flex-col md:flex-row justify-between items-center mt-6">
           <div className="flex items-center space-x-2 mb-4 md:mb-0">
-            <label className="text-gray-700">প্রতি পৃষ্ঠায়:</label>
+            <label className="text-gray-700">Per page:</label>
             <Select
               name="perPage"
               value={perPage}
@@ -147,16 +146,16 @@ const TaskList = ({ onEdit, onDelete }) => {
           </div>
           <div className="flex items-center space-x-4">
             <Button onClick={() => handlePageChange(pageNumber - 1)} disabled={pageNumber === 1}>
-              পূর্ববর্তী
+              Previous
             </Button>
             <span className="text-gray-700">
-              পৃষ্ঠা {pageNumber} / {totalPages} (মোট: {total})
+              Page {pageNumber} / {totalPages} (Total: {total})
             </span>
             <Button
               onClick={() => handlePageChange(pageNumber + 1)}
               disabled={pageNumber === totalPages || totalPages === 0}
             >
-              পরবর্তী
+              Next
             </Button>
           </div>
         </div>

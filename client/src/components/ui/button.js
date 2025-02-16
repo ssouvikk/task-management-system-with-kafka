@@ -2,7 +2,6 @@
 import React from 'react'
 
 const Button = ({ children, className = '', variant, ...props }) => {
-  // variant অনুযায়ী স্টাইল পরিবর্তন করুন
   const baseClass = "px-4 py-2 rounded focus:outline-none transition duration-200"
   const variants = {
     primary: "bg-blue-500 text-white hover:bg-blue-600",

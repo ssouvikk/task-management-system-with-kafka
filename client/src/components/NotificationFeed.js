@@ -11,19 +11,19 @@ const NotificationFeed = () => {
         const socket = new WebSocket(`ws://localhost:5000?token=${token}`);
 
         socket.onopen = () => {
-            console.log('WebSocket কানেক্টেড হয়েছে।');
+            console.log('WebSocket connected.');
         };
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            // Toast হিসেবে দেখান
+            // Show as a toast
             toast.info(`New Notification: ${data.change_type}`);
-            // Context-এ নতুন নোটিফিকেশন যোগ করুন
+            // Add new notification to context
             addNotification(data);
         };
 
         socket.onclose = () => {
-            console.log('WebSocket সংযোগ বিচ্ছিন্ন হয়েছে।');
+            console.log('WebSocket connection closed.');
         };
 
         return () => {
@@ -31,7 +31,8 @@ const NotificationFeed = () => {
         };
     }, [addNotification]);
 
-    return null; // এই কম্পোনেন্টটি UI render করবে না, শুধু নোটিফিকেশন handle করবে।
+    // This component does not render any UI, it only handles notifications.
+    return null;
 };
 
 export default NotificationFeed;
