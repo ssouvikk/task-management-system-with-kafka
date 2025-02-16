@@ -49,7 +49,7 @@ module.exports = {
      */
     createTask: async (req, res) => {
         try {
-            const { title, description, priority, status, dueDate } = req.body;
+            const { title, description, priority, status, dueDate, assignedTo } = req.body;
             if (!title) {
                 return res.status(400).json({ message: "Title is required" });
             }
@@ -68,6 +68,7 @@ module.exports = {
                 status: status || TaskStatus.TODO,
                 dueDate: dueDate ? new Date(dueDate) : null,
                 createdBy: req.user, // JWT middleware দ্বারা সেট করা user object
+                assignedTo,
             });
 
             await taskRepository.save(newTask);
@@ -122,7 +123,7 @@ module.exports = {
     updateTask: async (req, res) => {
         try {
             const taskId = Number(req.params.id);
-            const { title, description, priority, status, dueDate } = req.body;
+            const { title, description, priority, status, dueDate, assignedTo } = req.body;
 
             if (priority && !Object.values(TaskPriority).includes(priority)) {
                 return res.status(400).json({ message: "Invalid priority value" });
@@ -157,6 +158,7 @@ module.exports = {
             if (description !== undefined) task.description = description;
             if (priority !== undefined) task.priority = priority;
             if (status !== undefined) task.status = status;
+            if (assignedTo !== undefined) task.assignedTo = assignedTo;
             if (dueDate !== undefined) task.dueDate = dueDate ? new Date(dueDate) : null;
 
             await taskRepository.save(task);

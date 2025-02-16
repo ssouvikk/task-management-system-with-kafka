@@ -43,6 +43,10 @@ const Task = new EntitySchema({
       type: "timestamp",
       nullable: true,
     },
+    assignedTo: {
+      type: "varchar",
+      nullable: true,
+    },    
     createdAt: {
       type: "timestamp",
       createDate: true, // স্বয়ংক্রিয়ভাবে তৈরি হওয়ার তারিখ
