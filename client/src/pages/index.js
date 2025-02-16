@@ -12,7 +12,6 @@ const Dashboard = () => {
     const [editingTask, setEditingTask] = useState(null)
     const [showForm, setShowForm] = useState(false)
 
-    // Create Task Mutation
     const createTaskMutation = useMutation(
         (newTask) => axiosInstance.post('/api/tasks', newTask),
         {
@@ -23,7 +22,6 @@ const Dashboard = () => {
         }
     )
 
-    // Update Task Mutation
     const updateTaskMutation = useMutation(
         ({ id, updatedTask }) => axiosInstance.put(`/api/tasks/${id}`, updatedTask),
         {
@@ -35,7 +33,6 @@ const Dashboard = () => {
         }
     )
 
-    // Delete Task Mutation
     const deleteTaskMutation = useMutation(
         (id) => axiosInstance.delete(`/api/tasks/${id}`),
         {
@@ -66,7 +63,7 @@ const Dashboard = () => {
 
     return (
         <div className="p-4">
-            <h1 className="text-3xl font-bold mb-4">Task Management Dashboard</h1>
+            <h1 className="text-3xl font-bold mb-4 text-gray-800">Task Management Dashboard</h1>
             <Button
                 className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
                 onClick={() => { setEditingTask(null); setShowForm(true); }}

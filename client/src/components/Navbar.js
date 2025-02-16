@@ -24,7 +24,7 @@ const Navbar = () => {
                 <div className="relative">
                     <button
                         onClick={() => { router.push('/notifications') }}
-                        className="text-white hover:underline"
+                        className="text-white hover:underline focus:outline-none"
                     >
                         Notifications
                     </button>
@@ -36,7 +36,7 @@ const Navbar = () => {
                 </div>
                 <button
                     onClick={handleLogout}
-                    className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
+                    className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded focus:outline-none"
                 >
                     Logout
                 </button>

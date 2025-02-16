@@ -26,10 +26,7 @@ function MyApp({ Component, pageProps }) {
     }
   }, [])
 
-  // Layout wrap conditionally (login/register পেজে Layout না লাগানোর জন্য Component.noLayout ফ্ল্যাগ ব্যবহার করুন)
-  const getLayout = Component.noLayout
-    ? (page) => page
-    : (page) => <Layout>{page}</Layout>
+  const getLayout = Component.noLayout ? (page) => page : (page) => <Layout>{page}</Layout>
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
