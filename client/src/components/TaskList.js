@@ -1,10 +1,11 @@
 // src/components/TaskList.js
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import axiosInstance from '../utils/axiosInstance';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Select from '@/components/ui/Select'; // Import our new reusable Select
+import NotificationContext from '@/context/NotificationContext';
 
 // Options for the Select components:
 const priorityOptions = [
@@ -36,6 +37,7 @@ const fetchTasks = async (filters) => {
 };
 
 const TaskList = ({ onEdit, onDelete }) => {
+  const { notifications } = useContext(NotificationContext)
   const [filters, setFilters] = useState({
     priority: '',
     status: '',
@@ -68,6 +70,10 @@ const TaskList = ({ onEdit, onDelete }) => {
     // When perPage changes, start from page 1
     setFilters({ ...filters, pageNumber: 1 });
   };
+
+  useEffect(() => {
+    refetch()
+  }, [notifications])
 
   return (
     <div className="mt-6">

@@ -8,28 +8,34 @@ const NotificationFeed = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        const socket = new WebSocket(`ws://localhost:5000?token=${token}`);
+        let socket;
 
-        socket.onopen = () => {
-            console.log('WebSocket connected.');
+        const connectSocket = () => {
+            socket = new WebSocket(`ws://localhost:5000?token=${token}`);
+
+            socket.onopen = () => {
+                console.log('WebSocket connected.');
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                toast.info(`New Notification: ${data.change_type}`);
+                addNotification(data);
+            };
+
+            socket.onclose = () => {
+                console.log('WebSocket connection closed. Reconnecting...');
+                setTimeout(connectSocket, 3000); // 3 সেকেন্ড পর পুনরায় সংযোগ
+            };
         };
 
-        socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            // Show as a toast
-            toast.info(`New Notification: ${data.change_type}`);
-            // Add new notification to context
-            addNotification(data);
-        };
-
-        socket.onclose = () => {
-            console.log('WebSocket connection closed.');
-        };
+        connectSocket();
 
         return () => {
-            socket.close();
+            if (socket) socket.close();
         };
     }, [addNotification]);
+
 
     // This component does not render any UI, it only handles notifications.
     return null;
