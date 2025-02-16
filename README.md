@@ -84,6 +84,7 @@ http://localhost:5000/api-docs
 
 ## Tech Stack
 - **Backend:** Node.js, Express.js
+- **FrontEnd:** Next.JS, ShadCN
 - **Database:** PostgreSQL (TypeORM)
 - **Message Broker:** Kafka
 - **Real-time:** WebSockets
