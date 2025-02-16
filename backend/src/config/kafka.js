@@ -1,11 +1,11 @@
 //src/config/kafka.js
 const { Kafka } = require("kafkajs");
-require("dotenv").config(); // .env থেকে পরিবেশ ভেরিয়েবল লোড করা
+require("dotenv").config(); // Loading environment variables from .env
 
-// Kafka instance তৈরি করা হচ্ছে। 
+// Creating Kafka instance
 const kafka = new Kafka({ brokers: [process.env.KAFKA_BROKER] });
 
-// Producer তৈরি করা
+// Creating producer
 const producer = kafka.producer();
 const consumer = kafka.consumer({ groupId: "task_group" });
 
@@ -16,6 +16,5 @@ const connectKafka = async () => {
 };
 
 connectKafka();
-
 
 module.exports = { kafka, producer, consumer, connectKafka };

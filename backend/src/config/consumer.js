@@ -2,22 +2,22 @@
 const { Kafka } = require('kafkajs');
 const WebSocket = require('ws');
 
-// Kafka instance তৈরি করা হচ্ছে
+// Creating Kafka instance
 const kafka = new Kafka({
   brokers: [process.env.KAFKA_BROKER]
 });
 
-// Consumer তৈরি করা হচ্ছে, গ্রুপ আইডি 'task_group' ব্যবহার করে
+// Creating consumer using group id 'task_group'
 const consumer = kafka.consumer({ groupId: 'task_group' });
 
-// WebSocket সার্ভার সেটআপ (পোর্ট 8080 ব্যবহার করা হয়েছে)
+// Setting up WebSocket server (using port from SOCKET_PORT)
 const wss = new WebSocket.Server({ port: process.env.SOCKET_PORT });
 
 wss.on('connection', (ws) => {
-  console.log('নতুন WebSocket কানেকশন স্থাপিত হয়েছে');
+  console.log('New WebSocket connection established');
 });
 
-// সকল কানেক্টেড ক্লায়েন্টকে মেসেজ পাঠানোর জন্য ফাংশন
+// Function to broadcast messages to all connected clients
 function broadcastMessage(message) {
   wss.clients.forEach(client => {
     if (client.readyState === WebSocket.OPEN) {
@@ -26,37 +26,37 @@ function broadcastMessage(message) {
   });
 }
 
-// ডেমো: Task history table এ লগ করার ফাংশন
-// বাস্তব পরিবেশে এখানে ডাটাবেজ অপারেশন করবেন
+// Demo: Function to log into Task history table
+// In a real environment, perform database operations here
 async function logTaskHistory(taskEvent) {
-  // উদাহরণস্বরূপ, ডাটাবেজে taskEvent insert করার কোড থাকবে এখানে
+  // For example, code to insert taskEvent into the database would be here
   console.log('Task History Log:', taskEvent);
 }
 
-// Consumer চালু করার ফাংশন
+// Function to start the consumer
 async function runConsumer() {
   await consumer.connect();
-  // 'task_updates' topic এ সাবস্ক্রাইব করা হচ্ছে
+  // Subscribing to the 'task_updates' topic
   await consumer.subscribe({ topic: 'task_updates', fromBeginning: true });
   console.log('Kafka Consumer connected and subscribed to topic: task_updates');
 
-  // প্রতিটি মেসেজ প্রক্রিয়া করার জন্য
+  // Processing each message
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      // মেসেজটি JSON এ রূপান্তর করা হচ্ছে
+      // Converting message to JSON
       const taskEvent = JSON.parse(message.value.toString());
       console.log(`Received message: ${taskEvent.eventType} for Task ID: ${taskEvent.taskId}`);
 
-      // Task history table এ লগ করা (ডাটাবেজে সংরক্ষণ করার জন্য)
+      // Logging into Task history table (to store in database)
       await logTaskHistory(taskEvent);
 
-      // WebSocket এর মাধ্যমে রিয়েল-টাইম নোটিফিকেশন পাঠানো হচ্ছে
+      // Sending real-time notification through WebSocket
       broadcastMessage(taskEvent);
     },
   });
 }
 
-// Consumer চালু করা
+// Starting consumer
 runConsumer();
 
 module.exports = { wss };

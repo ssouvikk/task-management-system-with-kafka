@@ -1,8 +1,7 @@
 // src/config/db.js
-// import "reflect-metadata";
 const { DataSource } = require("typeorm");
 const { Pool } = require('pg');
-require("dotenv").config(); // .env থেকে পরিবেশ ভেরিয়েবল লোড করা
+require("dotenv").config(); // Loading environment variables from .env
 
 const { User } = require("../models/user.entity");
 const { Task } = require("../models/task.entity");
@@ -12,17 +11,14 @@ const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DATABASE_URL,
   entities: [User, Task, TaskHistory],
-  synchronize: true, // Development-এর জন্য, প্রোডাকশনে migration ব্যবহার করুন
+  synchronize: true, // For development; use migrations in production
 });
-
 
 AppDataSource.initialize()
   .then(() => console.log("📦 PostgreSQL Connected!"))
   .catch((error) => console.error("❌ Database Connection Error:", error));
 
-
-
-// PostgreSQL সংযোগের জন্য পুল সেটআপ (DATABASE_URL .env থেকে নেওয়া)
+// Pool setup for PostgreSQL connection (DATABASE_URL from .env)
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });

@@ -1,35 +1,35 @@
 // producer.js
 const { Kafka } = require('kafkajs');
 
-// Kafka instance তৈরি করা হচ্ছে। 
+// Creating Kafka instance
 const kafka = new Kafka({
   brokers: [process.env.KAFKA_BROKER]
 });
 
-// Producer তৈরি করা
+// Creating producer
 const producer = kafka.producer();
 
-// Producer কে Kafka ব্রোকারের সাথে কানেক্ট করা
+// Connecting producer to Kafka broker
 async function runProducer() {
   await producer.connect();
   console.log('Kafka Producer connected.');
 }
 
-// Producer চালু করা
+// Starting producer
 runProducer();
 
-// ফাংশন: টাস্ক ইভেন্ট পাবলিশ করা
-// message parameter এ টাস্কের তথ্য পাঠানো হবে যেমন eventType, taskId, ইত্যাদি।
+// Function: Publish task event
+// The message parameter will include task information such as eventType, taskId, etc.
 function publishTaskUpdate(message) {
   producer.send({
-    topic: 'task_updates', // Kafka topic যেখানে টাস্ক আপডেটের মেসেজ পাবলিশ হবে
+    topic: 'task_updates', // Kafka topic where the task update message will be published
     messages: [
       { value: JSON.stringify(message) }
     ]
   })
-  .then(() => console.log('Message published:', message))
-  .catch(err => console.error('Error publishing message:', err));
+    .then(() => console.log('Message published:', message))
+    .catch(err => console.error('Error publishing message:', err));
 }
 
-// Exports: অন্য মডিউল থেকে এই ফাংশনটি ব্যবহার করা যাবে
+// Exports: This function can be used in other modules
 module.exports = { publishTaskUpdate };
