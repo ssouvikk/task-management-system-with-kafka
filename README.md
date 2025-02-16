@@ -7,7 +7,6 @@ The **Task Management System** is a powerful and scalable task management soluti
 - **User Authentication**
   - User Registration & Login (JWT-based authentication)
   - Secure password hashing
-  - Profile management (update username, email, password, and profile picture)
   
 - **Task Management**
   - Create, update, delete tasks
@@ -20,14 +19,12 @@ The **Task Management System** is a powerful and scalable task management soluti
   - Kafka-based event-driven task management
 
 - **Admin Features (Optional)**
-  - Manage all users and tasks
-  - View Kafka event logs
-  - Broadcast system messages to users
+  - Manage all tasks
 
 ## Installation & Setup
 ### Prerequisites
 Ensure you have the following installed:
-- Node.js (>=16)
+- Node.js (v 20.11.1)
 - Docker & Docker Compose
 - PostgreSQL
 - Kafka & Zookeeper
