@@ -35,6 +35,7 @@ const Register = () => {
       const data = res.data;
       if (res.status === 201) {
         localStorage.setItem('token', data.accessToken);
+        localStorage.setItem('newRefreshToken', data.accessnewRefreshToken);
         setUser({ token: data.accessToken });
         router.push('/');
       }

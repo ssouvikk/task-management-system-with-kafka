@@ -11,6 +11,6 @@ router.post('/signup', signup);
 router.post('/login', login);
 
 // টোকেন রিফ্রেশ রুট
-router.post('/token', refreshTokenHandler);
+router.post('/refresh-token', refreshTokenHandler);
 
 module.exports = router
