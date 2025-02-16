@@ -1,5 +1,6 @@
 // components/Layout.js
 import Navbar from './Navbar';
+import NotificationFeed from './NotificationFeed';
 import Sidebar from './Sidebar';
 
 const Layout = ({ children }) => {
@@ -12,6 +13,7 @@ const Layout = ({ children }) => {
                     {children}
                 </main>
             </div>
+            <NotificationFeed />
         </div>
     );
 };

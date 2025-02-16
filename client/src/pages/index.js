@@ -1,5 +1,4 @@
 // pages/index.js
-//এই পৃষ্ঠাটি প্রোটেক্টেড রুট হিসেবে HOC withAuth ব্যবহার করে বানানো হয়েছে।
 import React, { useState } from 'react';
 import { useQueryClient, useMutation } from 'react-query';
 import TaskList from '../components/TaskList';
@@ -86,7 +85,6 @@ const Dashboard = () => {
                     />
                 )}
                 <TaskList onEdit={handleEdit} onDelete={handleDelete} />
-                <NotificationFeed />
             </div>
         </Layout>
     );

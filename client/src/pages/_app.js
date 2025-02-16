@@ -3,12 +3,10 @@ import '../styles/globals.css';
 import { useEffect, useState } from 'react';
 import AuthContext from '../context/AuthContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
-
-// react-toastify import
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { NotificationProvider } from '../context/NotificationContext';
 
-// Global QueryClient instance তৈরির সময় refetchOnWindowFocus false
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -16,7 +14,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(undefined);
@@ -30,10 +27,12 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
-      <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
-        <ToastContainer />
-      </QueryClientProvider>
+      <NotificationProvider>
+        <QueryClientProvider client={queryClient}>
+          <Component {...pageProps} />
+          <ToastContainer />
+        </QueryClientProvider>
+      </NotificationProvider>
     </AuthContext.Provider>
   );
 }

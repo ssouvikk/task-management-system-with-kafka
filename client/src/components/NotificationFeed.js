@@ -1,9 +1,10 @@
 // src/components/NotificationFeed.js
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useEffect, useContext } from 'react';
+import { toast } from 'react-toastify';
+import NotificationContext from '../context/NotificationContext';
 
 const NotificationFeed = () => {
-    const [notifications, setNotifications] = useState([]);
+    const { addNotification } = useContext(NotificationContext);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -15,7 +16,10 @@ const NotificationFeed = () => {
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            setNotifications((prev) => [data, ...prev]);
+            // Toast দেখান
+            toast.info(`New Notification: ${data.change_type}`);
+            // Global count update করুন
+            addNotification();
         };
 
         socket.onclose = () => {
@@ -25,25 +29,9 @@ const NotificationFeed = () => {
         return () => {
             socket.close();
         };
-    }, []);
+    }, [addNotification]);
 
-    return (
-        <div className="mt-4">
-            <h2 className="text-xl font-bold mb-2">নোটিফিকেশন ফিড</h2>
-            {notifications.map((notif, index) => (
-                <Card key={index} className="mb-2">
-                    <CardHeader>
-                        <CardTitle>{notif.change_type}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p>Task ID: {notif.taskId}</p>
-                        <p>New Status: {notif.new_value ? notif.new_value.status : '-'}</p>
-                        <p>{new Date(notif.updatedAt).toLocaleString()}</p>
-                    </CardContent>
-                </Card>
-            ))}
-        </div>
-    );
+    return null; // এই কম্পোনেন্টটি শুধু নোটিফিকেশন handle করবে, UI render করবে না।
 };
 
 export default NotificationFeed;
