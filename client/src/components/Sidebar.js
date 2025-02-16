@@ -7,10 +7,10 @@ const Sidebar = () => {
             <ul>
                 <li className="mb-2">
                     <Link href="/" className="text-gray-700 hover:text-blue-500">
-                        Home
+                    Dashboard
                     </Link>
                 </li>
-                <li className="mb-2">
+                {/* <li className="mb-2">
                     <Link href="/dashboard" className="text-gray-700 hover:text-blue-500">
                         Dashboard
                     </Link>
@@ -19,7 +19,7 @@ const Sidebar = () => {
                     <Link href="/tasks" className="text-gray-700 hover:text-blue-500">
                         Tasks
                     </Link>
-                </li>
+                </li> */}
                 {/* প্রয়োজনে আরও লিঙ্ক যোগ করুন */}
             </ul>
         </aside>

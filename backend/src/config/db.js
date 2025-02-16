@@ -16,10 +16,10 @@ const AppDataSource = new DataSource({
 });
 
 
-AppDataSource.initialize()
+/* AppDataSource.initialize()
   .then(() => console.log("📦 PostgreSQL Connected!"))
   .catch((error) => console.error("❌ Database Connection Error:", error));
-
+ */
 
 
 // PostgreSQL সংযোগের জন্য পুল সেটআপ (DATABASE_URL .env থেকে নেওয়া)

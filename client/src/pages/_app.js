@@ -4,8 +4,15 @@ import { useEffect, useState } from 'react';
 import AuthContext from '../context/AuthContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-// নতুন QueryClient instance তৈরি করুন
-const queryClient = new QueryClient();
+// Global QueryClient instance তৈরির সময় refetchOnWindowFocus false
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(undefined);

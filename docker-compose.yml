@@ -73,6 +73,7 @@ services:
       NEXT_PUBLIC_API_URL: http://localhost:5000
     depends_on:
       - backend
+    restart: always
     ports:
       - "3000:3000"
     volumes:

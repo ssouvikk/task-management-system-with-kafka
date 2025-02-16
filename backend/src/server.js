@@ -8,11 +8,11 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
 const startConsumer = require("./services/taskConsumer");
-// const { connectKafka } = require("./config/kafka");
+// const { connectKafka } = require("./config/kafka"); 
 const connectedClients = require("./config/socketClients");
 const authRoutes = require("./routes/auth.routes"); // অথেনটিকেশন রাউট
 const taskRoutes = require("./routes/task.routes"); // (টাস্ক রিলেটেড রাউট)
-// const { AppDataSource } = require("./config/db");
+const { AppDataSource } = require("./config/db");
 
 // Express অ্যাপ তৈরি করা
 const app = express();
@@ -93,13 +93,15 @@ app.post('/simulate-task-update', (req, res) => {
 
 const startServer = async () => {
   // ডাটাবেজ কানেকশন initialize করুন.
-  // await AppDataSource.initialize();
-  // console.log("PostgreSQL Connected!")
+  await AppDataSource.initialize();
+  console.log("PostgreSQL Connected!")
 
   // Kafka ও Consumer সংযোগ করুন
   // await connectKafka();
   await startConsumer();
-
+  console.log('consumer connected')
+  
+  
 };
 startServer(); 
 
@@ -107,4 +109,3 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
