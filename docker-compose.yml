@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # PostgreSQL সার্ভিস
+  # PostgreSQL service
   postgres:
     image: postgres:15
     container_name: postgres
@@ -14,7 +14,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  # Zookeeper সার্ভিস (Kafka এর জন্য)
+  # Zookeeper service (for Kafka)
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -24,7 +24,7 @@ services:
     ports:
       - "2181:2181"
 
-  # Kafka সার্ভিস
+  # Kafka service
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
@@ -40,7 +40,7 @@ services:
     ports:
       - "9092:9092"
 
-  # Backend সার্ভিস (Express.js)
+  # Backend service (Express.js)
   backend:
     build:
       context: ./backend
@@ -63,7 +63,7 @@ services:
     volumes:
       - ./backend:/usr/src/app
 
-  # Frontend সার্ভিস (Next.js)
+  # Frontend service (Next.js)
   frontend:
     build:
       context: ./client
