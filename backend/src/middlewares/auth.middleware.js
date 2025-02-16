@@ -1,3 +1,4 @@
+//src/middlewares/auth.middleware.js
 const jwt = require("jsonwebtoken");
 const { AppDataSource } = require("../config/db");
 const { User } = require("../models/user.entity");

@@ -6,6 +6,9 @@ const WebSocket = require("ws");
 const url = require("url");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const path = require('path');
 
 const startConsumer = require("./services/taskConsumer");
 // const { connectKafka } = require("./config/kafka"); 
@@ -18,6 +21,12 @@ const { AppDataSource } = require("./config/db");
 const app = express();
 app.use(express.json()); // JSON রিকোয়েস্ট হ্যান্ডেলিং
 app.use(cors());
+
+// YAML ফাইলটি লোড করুন
+const swaggerDocument = YAML.load(path.join(__dirname, '..', 'docs', 'swagger.yaml'));
+
+// '/api-docs' রাউটে Swagger UI সেটআপ করুন
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API রাউট মাউন্ট করা
 app.use("/api/auth", authRoutes);
