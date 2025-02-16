@@ -7,24 +7,31 @@ import { Input } from '@/components/ui/input'
 
 const fetchTasks = async (filters) => {
   const { data } = await axiosInstance.get('/api/tasks', { params: filters })
+  // API response-এ data: { tasks, total, pageNumber, perPage } থাকে
   return data.data
 }
 
 const TaskList = ({ onEdit, onDelete }) => {
+  // প্রথমে শুধুমাত্র ফিল্টারগুলোর জন্য state, যেখানে perPage নির্বাচন টেবিলের নিচে থাকবে
   const [filters, setFilters] = useState({
     priority: '',
     status: '',
     dueDate: '',
-    perPage: 10,
     pageNumber: 1,
   })
 
-  const { data: paginatedData, refetch } = useQuery(['tasks', filters], () => fetchTasks(filters))
+  // আলাদা state perPage এর জন্য (ডিফল্ট 10)
+  const [perPage, setPerPage] = useState(10)
+
+  // Query-তে perPage যুক্ত করে পাঠানো হবে
+  const { data: paginatedData, refetch } = useQuery(
+    ['tasks', { ...filters, perPage }],
+    () => fetchTasks({ ...filters, perPage })
+  )
 
   const tasks = paginatedData?.tasks || []
   const total = paginatedData?.total || 0
   const pageNumber = paginatedData?.pageNumber || filters.pageNumber
-  const perPage = paginatedData?.perPage || filters.perPage
   const totalPages = Math.ceil(total / perPage)
 
   const handleFilterChange = (e) => {
@@ -33,6 +40,12 @@ const TaskList = ({ onEdit, onDelete }) => {
 
   const handlePageChange = (newPage) => {
     setFilters({ ...filters, pageNumber: newPage })
+  }
+
+  const handlePerPageChange = (e) => {
+    setPerPage(Number(e.target.value))
+    // Reset page number to 1 when perPage পরিবর্তন করা হয়
+    setFilters({ ...filters, pageNumber: 1 })
   }
 
   return (
@@ -69,17 +82,6 @@ const TaskList = ({ onEdit, onDelete }) => {
           placeholder="Due Date"
           className="border p-2 rounded"
         />
-        <select
-          name="perPage"
-          value={filters.perPage}
-          onChange={handleFilterChange}
-          className="border p-2 rounded"
-        >
-          <option value={10}>10</option>
-          <option value={25}>25</option>
-          <option value={50}>50</option>
-          <option value={100}>100</option>
-        </select>
         <Button onClick={refetch}>ফিল্টার করুন</Button>
       </div>
 
@@ -119,20 +121,37 @@ const TaskList = ({ onEdit, onDelete }) => {
         </table>
       </div>
 
+      {/* Pagination এবং perPage নির্বাচন */}
       {tasks.length > 0 && (
-        <div className="flex justify-between items-center mt-6">
-          <Button onClick={() => handlePageChange(pageNumber - 1)} disabled={pageNumber === 1}>
-            পূর্ববর্তী
-          </Button>
-          <span className="text-gray-700">
-            পৃষ্ঠা {pageNumber} / {totalPages} (মোট: {total})
-          </span>
-          <Button
-            onClick={() => handlePageChange(pageNumber + 1)}
-            disabled={pageNumber === totalPages || totalPages === 0}
-          >
-            পরবর্তী
-          </Button>
+        <div className="flex flex-col md:flex-row justify-between items-center mt-6">
+          <div className="flex items-center space-x-2 mb-4 md:mb-0">
+            <label className="text-gray-700">প্রতি পৃষ্ঠায়:</label>
+            <select
+              name="perPage"
+              value={perPage}
+              onChange={handlePerPageChange}
+              className="border p-2 rounded"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button onClick={() => handlePageChange(pageNumber - 1)} disabled={pageNumber === 1}>
+              পূর্ববর্তী
+            </Button>
+            <span className="text-gray-700">
+              পৃষ্ঠা {pageNumber} / {totalPages} (মোট: {total})
+            </span>
+            <Button
+              onClick={() => handlePageChange(pageNumber + 1)}
+              disabled={pageNumber === totalPages || totalPages === 0}
+            >
+              পরবর্তী
+            </Button>
+          </div>
         </div>
       )}
     </div>
