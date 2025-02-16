@@ -72,34 +72,6 @@ wss.on("connection", (ws, req) => {
 
 
 
-/**
- * API রুট: টাস্ক স্ট্যাটাস পরিবর্তনের ইভেন্ট simulate করা
- * - এই রুটে POST রিকোয়েস্টের মাধ্যমে { userId, taskId, newStatus } পাওয়া যাবে
- * - নির্দিষ্ট ইউজারের সাথে সংযুক্ত থাকলে, WebSocket এর মাধ্যমে নোটিফিকেশন পাঠানো হবে
- */
-app.post('/simulate-task-update', (req, res) => {
-  const { userId, taskId, newStatus } = req.body;
-
-  // নোটিফিকেশন অবজেক্ট তৈরি করা হচ্ছে
-  const notification = {
-    event: 'taskStatusChanged',
-    taskId,
-    newStatus,
-    timestamp: new Date()
-  };
-
-  // নির্দিষ্ট ইউজারের WebSocket connection খোঁজা
-  const client = connectedClients.get(userId);
-  if (client && client.readyState === WebSocket.OPEN) {
-    // WebSocket এর মাধ্যমে নোটিফিকেশন পাঠানো
-    client.send(JSON.stringify(notification));
-    res.json({ message: 'Notification sent.' });
-  } else {
-    res.status(404).json({ message: 'User is not connected.' });
-  }
-});
-
-
 const startServer = async () => {
   // ডাটাবেজ কানেকশন initialize করুন.
   await AppDataSource.initialize();
