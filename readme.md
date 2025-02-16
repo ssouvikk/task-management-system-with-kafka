@@ -1,135 +1,126 @@
-# Express.js API Application
+# Task Management System
 
-This project is an Express.js-based API server that supports user authentication, task management, and real-time notifications via WebSocket. It is deployed using Docker and integrates with PostgreSQL, Kafka, and Zookeeper.
+## Project Overview
+
+The **Task Management System** is a robust and scalable API built with **Express.js**. It provides a structured way to manage user authentication, task tracking, and real-time notifications using WebSockets. The application is containerized with **Docker** and integrated with **PostgreSQL**, **Kafka**, and **Zookeeper** to ensure high performance and reliability.
 
 ## Features
 
-- **User Authentication:**  
-  - User registration (/api/auth/signup)
-  - User login (/api/auth/login)
-  - JWT token refresh (/api/auth/refresh-token)
+- **User Authentication:**
+  - User registration (`/api/auth/signup`)
+  - User login (`/api/auth/login`)
+  - JWT-based authentication & token refresh (`/api/auth/refresh-token`)
 
-- **Task Management:**  
-  - Create, retrieve, update, and delete tasks (/api/tasks)
+- **Task Management:**
+  - Create, retrieve, update, and delete tasks (`/api/tasks`)
 
-- **Notifications:**  
-  - Real-time notifications via WebSocket (e.g., task status updates)
-  - Simulate notifications through the API route (/simulate-task-update)
+- **Real-Time Notifications:**
+  - WebSocket-based live updates for task status changes
+  - Simulate notifications via API endpoint (`/simulate-task-update`)
 
-- **Swagger API Documentation:**  
-  - View API documentation at `/api-docs`
+- **API Documentation:**
+  - Available via Swagger UI at `/api-docs`
 
-## Project Structure
+## Installation & Setup
 
-```
-/backend
- ├── docs
- │     └── swagger.yaml         # Swagger API specification
- ├── src
- │     ├── controllers          # Controller files
- │     ├── models               # TypeORM entity files (User, Task, TaskHistory)
- │     ├── routes               # API route files (auth.routes.js, task.routes.ts)
- │     ├── services             # Kafka Consumer and other services
- │     ├── config               # Database, Kafka, and Socket client configuration
- │     └── server.js            # Application entry point
- ├── Dockerfile                 # Backend Dockerfile
- ├── package.json
- └── ...
-```
+### Prerequisites
 
-## Installation & Configuration
+Ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (v16 or later)
+- [Docker & Docker Compose](https://www.docker.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Kafka & Zookeeper](https://kafka.apache.org/)
 
-### Running Locally
+### Local Setup
 
 1. **Clone the Repository:**
-
-   ```bash
+   ```sh
    git clone <repository-url>
    cd backend
    ```
 
-2. **Install Node Packages:**
-
-   ```bash
+2. **Install Dependencies:**
+   ```sh
    npm install
    ```
 
-3. **Create Environment Variables (.env):**
-
-   Example configuration for the `.env` file:
+3. **Set Up Environment Variables:**
+   Create a `.env` file and configure the following:
    ```env
    PORT=5000
    JWT_SECRET=your_jwt_secret
-   JWT_REFRESH_SECRET=your_jwt_refresh_secret_key
-   DATABASE_URL=postgres://myuser:mypassword@postgres:5432/mydb
-   KAFKA_BROKER=kafka:9092
+   JWT_REFRESH_SECRET=your_jwt_refresh_secret
+   DATABASE_URL=postgres://user:password@localhost:5432/task_db
+   KAFKA_BROKER=localhost:9092
    ```
 
-4. **View Swagger API Documentation:**
+4. **Start the Application:**
+   ```sh
+   npm run dev
+   ```
 
-   Once the server is running, access API documentation in your browser:
+5. **Access API Documentation:**
+   Open in your browser:
    ```
    http://localhost:5000/api-docs
    ```
 
-5. **Start the Server:**
+### Docker Deployment
 
-   ```bash
-   npm run dev
-   ```
-
-### Running with Docker
-
-This project can be run using Docker Compose.
-
-1. **Install Docker and Docker Compose:**  
-   Ensure that Docker and Docker Compose are installed on your system.
-
-2. **Start Docker Compose:**
-
-   Navigate to the project root directory where `docker-compose.yml` is located and run:
-   ```bash
+1. **Build and Run Containers:**
+   ```sh
    docker-compose up --build
    ```
-   This will start PostgreSQL, Zookeeper, Kafka, the Backend (Express.js), and the Frontend (Next.js).
 
-3. **Environment Variables & Volumes:**  
-   - The `COPY` command in the Dockerfile ensures all code and the `docs` folder are included.
-   - The `volumes` setup in the Docker Compose file ensures that code changes reflect in the container.
+2. **Verify Running Containers:**
+   ```sh
+   docker ps
+   ```
 
-## Usage Guide
+3. **Access API & Services:**
+   - API Base URL: `http://localhost:5000`
+   - API Docs: `http://localhost:5000/api-docs`
 
-- **API Routes:**  
-  - User authentication and task management endpoints are accessible via `/api/auth` and `/api/tasks`.
-  
-- **Swagger Documentation:**  
-  - View API documentation at `/api-docs`.
+## Deployment Instructions
 
-- **Notification Simulation:**  
-  - Send a POST request to `/simulate-task-update` to simulate a notification for a specific user.
+To deploy the Task Management System in a production environment:
 
-## Troubleshooting & Tips
+1. **Prepare the Server:**
+   - Install Docker & Docker Compose
+   - Configure firewall and expose necessary ports
 
-- **Swagger File Not Found Issue:**  
-  - Ensure that `docs/swagger.yaml` is correctly placed and referenced in `server.js`. Example:
-    ```javascript
-    const swaggerDocument = YAML.load(path.join(__dirname, '..', 'docs', 'swagger.yaml'));
-    ```
+2. **Clone the Repository & Set Up Environment:**
+   ```sh
+   git clone <repository-url>
+   cd backend
+   nano .env  # Update environment variables
+   ```
 
-- **Kafka Warning Messages:**  
-  - KafkaJS might display warnings regarding default partitioners. If needed, disable warnings by setting the environment variable:
-    ```env
-    KAFKAJS_NO_PARTITIONER_WARNING=1
-    ```
+3. **Run Application Using Docker:**
+   ```sh
+   docker-compose up --build -d
+   ```
 
-- **Docker Volumes & Caching:**  
-  - Ensure that Docker Volumes are set up correctly so that code changes reflect in the container.
+4. **Monitor Logs (Optional):**
+   ```sh
+   docker-compose logs -f
+   ```
+
+## Tech Stack
+
+- **Backend:** Node.js, Express.js
+- **Database:** PostgreSQL
+- **Messaging & Streaming:** Kafka, Zookeeper
+- **Authentication:** JWT
+- **Real-Time Updates:** WebSockets
+- **Containerization:** Docker, Docker Compose
+- **Documentation:** Swagger
 
 ## License
 
-This project is distributed under the MIT License. For more details, refer to the `LICENSE` file (if available).
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-This README file provides all the necessary information about the application, installation guide, usage instructions, and troubleshooting tips. If you have any questions or need further assistance, feel free to reach out.
+For any queries or contributions, feel free to raise an issue or submit a pull request!
 
