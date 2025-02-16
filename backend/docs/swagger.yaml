@@ -1,11 +1,11 @@
+# docs/swagger.yaml
 openapi: "3.0.0"
 info:
-  title: "Express.js API ডকুমেন্টেশন"
+  title: "Express.js API Documentation"
   description: >
-    এই ডকুমেন্টেশনে নিম্নলিখিত এন্ডপয়েন্টগুলোর বর্ণনা দেয়া হয়েছে:
+    This documentation describes the following endpoints:
     - **Authentication**: /signup, /login, /refresh-token
     - **Task Management**: /tasks (POST, GET), /tasks/{id} (PUT, DELETE)
-    - **Notifications** (ঐচ্ছিক): /notifications
   version: "1.0.0"
 servers:
   - url: "http://localhost:3000"
@@ -14,8 +14,8 @@ paths:
     post:
       tags:
         - Authentication
-      summary: "ইউজার রেজিস্ট্রেশন"
-      description: "নতুন ইউজার রেজিস্ট্রেশন এর এন্ডপয়েন্ট।"
+      summary: "User Registration"
+      description: "Endpoint for new user registration."
       requestBody:
         required: true
         content:
@@ -38,7 +38,7 @@ paths:
               username: "user123"
       responses:
         "201":
-          description: "সফলভাবে রেজিস্ট্রেশন হয়েছে"
+          description: "Registration successful"
           content:
             application/json:
               schema:
@@ -55,9 +55,9 @@ paths:
                         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                   message:
                     type: string
-                    example: "সফলভাবে রেজিস্ট্রেশন হয়েছে"
+                    example: "Registration successful"
         "400":
-          description: "ইউজার পূর্বেই বিদ্যমান অথবা ইনপুটে ত্রুটি"
+          description: "User already exists or input error"
           content:
             application/json:
               schema:
@@ -67,9 +67,9 @@ paths:
                     type: "null"
                   message:
                     type: string
-                    example: "ইউজার পূর্বেই বিদ্যমান"
+                    example: "User already exists"
         "500":
-          description: "সার্ভার এরর"
+          description: "Server error"
           content:
             application/json:
               schema:
@@ -79,14 +79,14 @@ paths:
                     type: "null"
                   message:
                     type: string
-                    example: "সার্ভার এরর"
+                    example: "Server error"
 
   /login:
     post:
       tags:
         - Authentication
-      summary: "ইউজার লগিন"
-      description: "ইউজার লগিন করার এন্ডপয়েন্ট।"
+      summary: "User Login"
+      description: "Endpoint for user login."
       requestBody:
         required: true
         content:
@@ -105,7 +105,7 @@ paths:
               password: "password123"
       responses:
         "200":
-          description: "সফলভাবে লগইন হয়েছে"
+          description: "Login successful"
           content:
             application/json:
               schema:
@@ -122,9 +122,9 @@ paths:
                         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                   message:
                     type: string
-                    example: "সফলভাবে লগইন হয়েছে"
+                    example: "Login successful"
         "400":
-          description: "ভুল ক্রেডেনশিয়াল"
+          description: "Invalid credentials"
           content:
             application/json:
               schema:
@@ -134,9 +134,9 @@ paths:
                     type: "null"
                   message:
                     type: string
-                    example: "ভুল ক্রেডেনশিয়াল"
+                    example: "Invalid credentials"
         "500":
-          description: "সার্ভার এরর"
+          description: "Server error"
           content:
             application/json:
               schema:
@@ -146,14 +146,14 @@ paths:
                     type: "null"
                   message:
                     type: string
-                    example: "সার্ভার এরর"
+                    example: "Server error"
 
   /refresh-token:
     post:
       tags:
         - Authentication
-      summary: "টোকেন রিফ্রেশ"
-      description: "রিফ্রেশ টোকেন যাচাই করে নতুন access ও refresh token ইস্যু করে।"
+      summary: "Token Refresh"
+      description: "Verifies refresh token and issues new access and refresh tokens."
       requestBody:
         required: true
         content:
@@ -168,7 +168,7 @@ paths:
               token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
       responses:
         "200":
-          description: "নতুন টোকেন সফলভাবে ইস্যু হয়েছে"
+          description: "New tokens issued successfully"
           content:
             application/json:
               schema:
@@ -185,9 +185,9 @@ paths:
                         example: "newRefreshToken123..."
                   message:
                     type: string
-                    example: "নতুন টোকেন সফলভাবে ইস্যু হয়েছে"
+                    example: "New tokens issued successfully"
         "401":
-          description: "রিফ্রেশ টোকেন প্রয়োজন"
+          description: "Refresh token required"
           content:
             application/json:
               schema:
@@ -197,9 +197,9 @@ paths:
                     type: "null"
                   message:
                     type: string
-                    example: "রিফ্রেশ টোকেন প্রয়োজন"
+                    example: "Refresh token required"
         "403":
-          description: "রিফ্রেশ টোকেন অবৈধ"
+          description: "Invalid refresh token"
           content:
             application/json:
               schema:
@@ -209,14 +209,14 @@ paths:
                     type: "null"
                   message:
                     type: string
-                    example: "রিফ্রেশ টোকেন অবৈধ"
+                    example: "Invalid refresh token"
 
   /tasks:
     post:
       tags:
         - Task Management
-      summary: "নতুন টাস্ক তৈরি"
-      description: "JWT Authentication প্রয়োজন – নতুন টাস্ক তৈরি করার এন্ডপয়েন্ট।"
+      summary: "Create New Task"
+      description: "JWT Authentication required – Endpoint to create new task."
       security:
         - bearerAuth: []
       requestBody:
@@ -228,10 +228,10 @@ paths:
               properties:
                 title:
                   type: string
-                  example: "নতুন টাস্ক"
+                  example: "New Task"
                 description:
                   type: string
-                  example: "টাস্কের বর্ণনা"
+                  example: "Task description"
                 priority:
                   type: string
                   enum: [Low, Medium, High]
@@ -246,17 +246,17 @@ paths:
                   example: "2025-03-01T00:00:00Z"
                 assignedTo:
                   type: string
-                  example: "user2"  # এখন এটি একটি string হিসেবে ধরা হচ্ছে
+                  example: "user2"
             example:
-              title: "নতুন টাস্ক"
-              description: "টাস্কের বর্ণনা"
+              title: "New Task"
+              description: "Task description"
               priority: "Medium"
               status: "To Do"
               dueDate: "2025-03-01T00:00:00Z"
               assignedTo: "user2"
       responses:
         "201":
-          description: "টাস্ক সফলভাবে তৈরি হয়েছে"
+          description: "Task created successfully"
           content:
             application/json:
               schema:
@@ -268,7 +268,7 @@ paths:
                     type: string
                     example: "Task created successfully"
         "400":
-          description: "ভুল ইনপুট বা অনুপস্থিত ফিল্ড"
+          description: "Invalid input or missing field"
           content:
             application/json:
               schema:
@@ -280,7 +280,7 @@ paths:
                     type: string
                     example: "Title is required"
         "500":
-          description: "সার্ভার এরর"
+          description: "Server error"
           content:
             application/json:
               schema:
@@ -294,8 +294,8 @@ paths:
     get:
       tags:
         - Task Management
-      summary: "টাস্ক লিস্ট সংগ্রহ"
-      description: "JWT Authentication প্রয়োজন – ইউজারের টাস্ক লিস্ট রিট্রিভ করার এন্ডপয়েন্ট।"
+      summary: "Retrieve Task List"
+      description: "JWT Authentication required – Endpoint to retrieve user's task list."
       security:
         - bearerAuth: []
       parameters:
@@ -304,34 +304,34 @@ paths:
           schema:
             type: string
             enum: [Low, Medium, High]
-          description: "প্রায়োরিটি অনুযায়ী ফিল্টার"
+          description: "Filter by priority"
         - in: query
           name: status
           schema:
             type: string
             enum: ["To Do", "In Progress", "Done"]
-          description: "স্ট্যাটাস অনুযায়ী ফিল্টার"
+          description: "Filter by status"
         - in: query
           name: dueDate
           schema:
             type: string
             format: date
-          description: "ডিউ তারিখ (YYYY-MM-DD)"
+          description: "Due date (YYYY-MM-DD)"
         - in: query
           name: perPage
           schema:
             type: number
             example: 10
-          description: "প্রতি পেজ কতটি টাস্ক দেখানো হবে"
+          description: "Number of tasks per page"
         - in: query
           name: pageNumber
           schema:
             type: number
             example: 1
-          description: "কোন পেজের তথ্য চাওয়া হচ্ছে"
+          description: "Page number to retrieve"
       responses:
         "200":
-          description: "সফলভাবে টাস্ক লিস্ট রিট্রিভ করা হয়েছে"
+          description: "Task list retrieved successfully"
           content:
             application/json:
               schema:
@@ -357,7 +357,7 @@ paths:
                     type: string
                     example: ""
         "500":
-          description: "সার্ভার এরর"
+          description: "Server error"
           content:
             application/json:
               schema:
@@ -373,8 +373,8 @@ paths:
     put:
       tags:
         - Task Management
-      summary: "টাস্ক আপডেট"
-      description: "JWT Authentication প্রয়োজন – নির্দিষ্ট টাস্ক আপডেট করার এন্ডপয়েন্ট।"
+      summary: "Update Task"
+      description: "JWT Authentication required – Endpoint to update a specific task."
       security:
         - bearerAuth: []
       parameters:
@@ -383,7 +383,7 @@ paths:
           required: true
           schema:
             type: number
-          description: "আপডেট করতে চাওয়া টাস্কের আইডি"
+          description: "ID of the task to update"
       requestBody:
         required: true
         content:
@@ -393,10 +393,10 @@ paths:
               properties:
                 title:
                   type: string
-                  example: "আপডেটেড টাস্ক"
+                  example: "Updated Task"
                 description:
                   type: string
-                  example: "আপডেটেড বর্ণনা"
+                  example: "Updated description"
                 priority:
                   type: string
                   enum: [Low, Medium, High]
@@ -413,15 +413,15 @@ paths:
                   type: string
                   example: "user3"
             example:
-              title: "আপডেটেড টাস্ক"
-              description: "আপডেটেড বর্ণনা"
+              title: "Updated Task"
+              description: "Updated description"
               priority: "High"
               status: "In Progress"
               dueDate: "2025-04-01T00:00:00Z"
               assignedTo: "user3"
       responses:
         "200":
-          description: "টাস্ক সফলভাবে আপডেট হয়েছে"
+          description: "Task updated successfully"
           content:
             application/json:
               schema:
@@ -433,7 +433,7 @@ paths:
                     type: string
                     example: "Task updated successfully"
         "400":
-          description: "ভুল ইনপুট বা অনুপযুক্ত ফিল্ড"
+          description: "Invalid input or inappropriate field"
           content:
             application/json:
               schema:
@@ -445,7 +445,7 @@ paths:
                     type: string
                     example: "Invalid priority value"
         "403":
-          description: "অথরাইজেশনের ত্রুটি"
+          description: "Authorization error"
           content:
             application/json:
               schema:
@@ -457,7 +457,7 @@ paths:
                     type: string
                     example: "Not authorized to update this task"
         "404":
-          description: "টাস্ক পাওয়া যায়নি"
+          description: "Task not found"
           content:
             application/json:
               schema:
@@ -469,7 +469,7 @@ paths:
                     type: string
                     example: "Task not found"
         "500":
-          description: "সার্ভার এরর"
+          description: "Server error"
           content:
             application/json:
               schema:
@@ -483,8 +483,8 @@ paths:
     delete:
       tags:
         - Task Management
-      summary: "টাস্ক মুছে ফেলা"
-      description: "JWT Authentication প্রয়োজন – নির্দিষ্ট টাস্ক মুছে ফেলার এন্ডপয়েন্ট।"
+      summary: "Delete Task"
+      description: "JWT Authentication required – Endpoint to delete a specific task."
       security:
         - bearerAuth: []
       parameters:
@@ -493,10 +493,10 @@ paths:
           required: true
           schema:
             type: number
-          description: "মুছে ফেলতে চাওয়া টাস্কের আইডি"
+          description: "ID of the task to delete"
       responses:
         "200":
-          description: "টাস্ক সফলভাবে মুছে ফেলা হয়েছে"
+          description: "Task deleted successfully"
           content:
             application/json:
               schema:
@@ -508,7 +508,7 @@ paths:
                     type: string
                     example: "Task deleted successfully"
         "403":
-          description: "অথরাইজেশন ত্রুটি"
+          description: "Authorization error"
           content:
             application/json:
               schema:
@@ -520,7 +520,7 @@ paths:
                     type: string
                     example: "Not authorized to delete this task"
         "404":
-          description: "টাস্ক পাওয়া যায়নি"
+          description: "Task not found"
           content:
             application/json:
               schema:
@@ -532,69 +532,7 @@ paths:
                     type: string
                     example: "Task not found"
         "500":
-          description: "সার্ভার এরর"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: "null"
-                  message:
-                    type: string
-                    example: "Server error"
-
-  /notifications:
-    get:
-      tags:
-        - Notifications
-      summary: "নোটিফিকেশন সংগ্রহ"
-      description: "JWT Authentication প্রয়োজন – ইউজারের নোটিফিকেশন লিস্ট রিট্রিভ করার এন্ডপয়েন্ট (ঐচ্ছিক)।"
-      security:
-        - bearerAuth: []
-      responses:
-        "200":
-          description: "সফলভাবে নোটিফিকেশন রিট্রিভ হয়েছে"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: number
-                          example: 1
-                        message:
-                          type: string
-                          example: "নতুন টাস্ক অ্যাসাইন হয়েছে"
-                        read:
-                          type: boolean
-                          example: false
-                        createdAt:
-                          type: string
-                          format: date-time
-                          example: "2025-02-17T10:00:00Z"
-                  message:
-                    type: string
-                    example: ""
-        "401":
-          description: "অ্যাক্সেস ডিনাইড"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: "null"
-                  message:
-                    type: string
-                    example: "Access Denied"
-        "500":
-          description: "সার্ভার এরর"
+          description: "Server error"
           content:
             application/json:
               schema:
@@ -636,10 +574,10 @@ components:
           example: 1
         title:
           type: string
-          example: "নতুন টাস্ক"
+          example: "New Task"
         description:
           type: string
-          example: "টাস্কের বর্ণনা"
+          example: "Task description"
         priority:
           type: string
           enum: [Low, Medium, High]
