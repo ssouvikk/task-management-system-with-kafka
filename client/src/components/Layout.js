@@ -1,7 +1,7 @@
 // components/Layout.js
-import Navbar from './Navbar';
-import NotificationFeed from './NotificationFeed';
-import Sidebar from './Sidebar';
+import Navbar from './Navbar'
+import NotificationFeed from './NotificationFeed'
+import Sidebar from './Sidebar'
 
 const Layout = ({ children }) => {
     return (
@@ -9,13 +9,13 @@ const Layout = ({ children }) => {
             <Navbar />
             <div className="flex flex-1">
                 <Sidebar />
-                <main className="flex-1 p-4">
+                <main className="flex-1 p-4 bg-gray-50">
                     {children}
                 </main>
             </div>
             <NotificationFeed />
         </div>
-    );
-};
+    )
+}
 
-export default Layout;
+export default Layout

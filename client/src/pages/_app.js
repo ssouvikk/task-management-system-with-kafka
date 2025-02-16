@@ -1,12 +1,12 @@
 // pages/_app.js
-import '../styles/globals.css';
-import { useEffect, useState } from 'react';
-import AuthContext from '../context/AuthContext';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { NotificationProvider } from '../context/NotificationContext';
-import Layout from '@/components/Layout';
+import '../styles/globals.css'
+import { useEffect, useState } from 'react'
+import AuthContext from '../context/AuthContext'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { NotificationProvider } from '../context/NotificationContext'
+import Layout from '@/components/Layout'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,20 +14,19 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
-});
+})
 
 function MyApp({ Component, pageProps }) {
-  const [user, setUser] = useState(undefined);
+  const [user, setUser] = useState(undefined)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token');
-      setUser(token ? { token } : null);
+      const token = localStorage.getItem('token')
+      setUser(token ? { token } : null)
     }
-  }, []);
+  }, [])
 
-
-  // যদি Component.noLayout সেট থাকে, তাহলে সরাসরি Component রেন্ডার করুন, নতুবা Layout দিয়ে wrap করুন।
+  // Layout wrap conditionally (login/register পেজে Layout না লাগানোর জন্য Component.noLayout ফ্ল্যাগ ব্যবহার করুন)
   const getLayout = Component.noLayout
     ? (page) => page
     : (page) => <Layout>{page}</Layout>
@@ -37,11 +36,11 @@ function MyApp({ Component, pageProps }) {
       <NotificationProvider>
         <QueryClientProvider client={queryClient}>
           {getLayout(<Component {...pageProps} />)}
-          <ToastContainer />
+          <ToastContainer position="top-right" autoClose={5000} />
         </QueryClientProvider>
       </NotificationProvider>
     </AuthContext.Provider>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp

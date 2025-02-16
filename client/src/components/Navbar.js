@@ -1,28 +1,31 @@
-// src/components/Navbar.js
-import { useContext } from 'react';
-import AuthContext from '../context/AuthContext';
-import NotificationContext from '../context/NotificationContext';
-import { useRouter } from 'next/router';
-import { toast } from 'react-toastify';
+// components/Navbar.js
+import { useContext } from 'react'
+import AuthContext from '../context/AuthContext'
+import NotificationContext from '../context/NotificationContext'
+import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 
 const Navbar = () => {
-    const { setUser } = useContext(AuthContext);
-    const { notifications } = useContext(NotificationContext);
-    const router = useRouter();
+    const { setUser } = useContext(AuthContext)
+    const { notifications } = useContext(NotificationContext)
+    const router = useRouter()
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        setUser(null);
-        router.push('/login');
-        toast('Logged Out successfully');
-    };
+        localStorage.removeItem('token')
+        setUser(null)
+        router.push('/login')
+        toast('Logged Out successfully')
+    }
 
     return (
-        <nav className="bg-gray-800 text-white p-4 flex justify-between items-center">
+        <nav className="bg-gray-800 text-white p-4 flex flex-col sm:flex-row justify-between items-center">
             <div className="text-lg font-bold">Task Manager</div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 mt-2 sm:mt-0">
                 <div className="relative">
-                    <button onClick={() => { router.push('/notifications'); }} className="mr-4">
+                    <button
+                        onClick={() => { router.push('/notifications') }}
+                        className="text-white hover:underline"
+                    >
                         Notifications
                     </button>
                     {notifications.length > 0 && (
@@ -39,7 +42,7 @@ const Navbar = () => {
                 </button>
             </div>
         </nav>
-    );
-};
+    )
+}
 
-export default Navbar;
+export default Navbar
