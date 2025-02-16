@@ -11,6 +11,7 @@ const NotificationFeed = () => {
         let socket;
 
         const connectSocket = () => {
+            if(!token) return
             socket = new WebSocket(`ws://localhost:5000?token=${token}`);
 
             socket.onopen = () => {
