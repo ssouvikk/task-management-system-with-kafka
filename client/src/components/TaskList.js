@@ -6,27 +6,43 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 const fetchTasks = async (filters) => {
+  // API call-এ perPage ও pageNumber query parameters যোগ করুন
   const { data } = await axiosInstance.get('/api/tasks', { params: filters });
+  // এখন API response-এ data: { tasks, total, pageNumber, perPage } আছে
   return data.data;
 };
 
 const TaskList = ({ onEdit, onDelete }) => {
+  // Filter state-এ pagination values যুক্ত করুন
   const [filters, setFilters] = useState({
     priority: '',
     status: '',
-    dueDate: ''
+    dueDate: '',
+    perPage: 2,      // ডিফল্ট 10
+    pageNumber: 1,    // ডিফল্ট 1
   });
 
-  const { data: tasks, refetch } = useQuery(['tasks', filters], () => fetchTasks(filters));
+  const { data: paginatedData, refetch } = useQuery(['tasks', filters], () => fetchTasks(filters));
+
+  // paginatedData থেকে tasks, total, pageNumber ও perPage নিন
+  const tasks = paginatedData?.tasks || [];
+  const total = paginatedData?.total || 0;
+  const pageNumber = paginatedData?.pageNumber || filters.pageNumber;
+  const perPage = paginatedData?.perPage || filters.perPage;
+  const totalPages = Math.ceil(total / perPage);
 
   const handleFilterChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+    setFilters({ ...filters, [e.target.name]: e.target.value, pageNumber: 1 }); // নতুন filter এ page reset করুন
+  };
+
+  const handlePageChange = (newPage) => {
+    setFilters({ ...filters, pageNumber: newPage });
   };
 
   return (
     <div className="mt-4">
       <h2 className="text-2xl font-bold mb-2">টাস্ক তালিকা</h2>
-      <div className="flex space-x-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4">
         <select
           name="priority"
           value={filters.priority}
@@ -60,6 +76,20 @@ const TaskList = ({ onEdit, onDelete }) => {
           className="border p-2 rounded"
         />
 
+        <Input
+          type="number"
+          name="perPage"
+          value={filters.perPage}
+          onChange={(e) => {
+            const value = Math.min(Number(e.target.value) || 10, 100);
+            setFilters({ ...filters, perPage: value, pageNumber: 1 });
+          }}
+          placeholder="Per Page"
+          className="border p-2 rounded w-24"
+          min="1"
+          max="100"
+        />
+
         <Button onClick={refetch}>ফিল্টার করুন</Button>
       </div>
 
@@ -76,7 +106,7 @@ const TaskList = ({ onEdit, onDelete }) => {
           </tr>
         </thead>
         <tbody>
-          {tasks && tasks.map((task) => (
+          {tasks.map((task) => (
             <tr key={task.id} className="border-b">
               <td className="p-2">{task.title}</td>
               <td className="p-2">{task.description}</td>
@@ -94,6 +124,25 @@ const TaskList = ({ onEdit, onDelete }) => {
           ))}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-4">
+        <Button
+          onClick={() => handlePageChange(pageNumber - 1)}
+          disabled={pageNumber === 1}
+        >
+          পূর্ববর্তী
+        </Button>
+        <span>
+          পৃষ্ঠা {pageNumber} / {totalPages} (মোট: {total})
+        </span>
+        <Button
+          onClick={() => handlePageChange(pageNumber + 1)}
+          disabled={pageNumber === totalPages || totalPages === 0}
+        >
+          পরবর্তী
+        </Button>
+      </div>
     </div>
   );
 };
