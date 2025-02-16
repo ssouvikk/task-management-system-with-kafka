@@ -1,3 +1,4 @@
+// pages/register.js
 import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
@@ -25,7 +26,7 @@ const Register = () => {
     e.preventDefault();
     setError('');
     if (password !== confirmPassword) {
-      setError('পাসওয়ার্ড মিলছে না');
+      setError('Passwords do not match');
       return;
     }
     try {
@@ -42,7 +43,7 @@ const Register = () => {
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else {
-        setError('সার্ভারের সাথে সংযোগে সমস্যা হয়েছে');
+        setError('There was a problem connecting to the server');
       }
     }
   };
@@ -56,21 +57,21 @@ const Register = () => {
         onSubmit={handleRegister}
         className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">রেজিস্টার করুন</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Register</h2>
         {error && <div className="mb-4 text-red-500 text-center">{error}</div>}
         <div className="mb-4">
-          <label className="block mb-2 text-gray-700">ইউজারনেম</label>
+          <label className="block mb-2 text-gray-700">Username</label>
           <Input
             className="w-full"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="আপনার ইউজারনেম দিন"
+            placeholder="Enter your username"
             required
           />
         </div>
         <div className="mb-4">
-          <label className="block mb-2 text-gray-700">ইমেইল</label>
+          <label className="block mb-2 text-gray-700">Email</label>
           <Input
             className="w-full"
             type="email"
@@ -81,7 +82,7 @@ const Register = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block mb-2 text-gray-700">পাসওয়ার্ড</label>
+          <label className="block mb-2 text-gray-700">Password</label>
           <Input
             className="w-full"
             type="password"
@@ -91,7 +92,7 @@ const Register = () => {
           />
         </div>
         <div className="mb-6">
-          <label className="block mb-2 text-gray-700">কনফার্ম পাসওয়ার্ড</label>
+          <label className="block mb-2 text-gray-700">Confirm Password</label>
           <Input
             className="w-full"
             type="password"
@@ -101,12 +102,12 @@ const Register = () => {
           />
         </div>
         <Button type="submit" className="w-full">
-          রেজিস্টার
+          Register
         </Button>
         <p className="mt-6 text-center text-gray-600">
-          আগে থেকে একাউন্ট আছে?{' '}
+          Already have an account?{' '}
           <Link href="/login" className="text-blue-500 hover:underline">
-            লগইন করুন
+            Login
           </Link>
         </p>
       </form>

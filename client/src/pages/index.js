@@ -56,7 +56,7 @@ const Dashboard = () => {
     }
 
     const handleDelete = (id) => {
-        if (confirm('আপনি কি নিশ্চিত যে টাস্কটি মুছে ফেলতে চান?')) {
+        if (confirm('Are you sure you want to delete the task?')) {
             deleteTaskMutation.mutate(id)
         }
     }
@@ -68,7 +68,7 @@ const Dashboard = () => {
                 className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
                 onClick={() => { setEditingTask(null); setShowForm(true); }}
             >
-                নতুন টাস্ক তৈরি করুন
+                Create New Task
             </Button>}
             {showForm && (
                 <TaskForm

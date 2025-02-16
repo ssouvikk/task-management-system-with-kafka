@@ -37,7 +37,7 @@ const Login = () => {
             if (err.response && err.response.data && err.response.data.message) {
                 setError(err.response.data.message);
             } else {
-                setError('সার্ভারের সাথে সংযোগে সমস্যা হয়েছে');
+                setError('There was a problem connecting to the server');
             }
         }
     };
@@ -51,10 +51,10 @@ const Login = () => {
                 onSubmit={handleLogin}
                 className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
             >
-                <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">লগইন করুন</h2>
+                <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Login</h2>
                 {error && <div className="mb-4 text-red-500 text-center">{error}</div>}
                 <div className="mb-4">
-                    <label className="block mb-2 text-gray-700">ইমেইল</label>
+                    <label className="block mb-2 text-gray-700">Email</label>
                     <Input
                         type="email"
                         value={email}
@@ -65,7 +65,7 @@ const Login = () => {
                     />
                 </div>
                 <div className="mb-6">
-                    <label className="block mb-2 text-gray-700">পাসওয়ার্ড</label>
+                    <label className="block mb-2 text-gray-700">Password</label>
                     <Input
                         type="password"
                         value={password}
@@ -75,12 +75,12 @@ const Login = () => {
                     />
                 </div>
                 <Button type="submit" className="w-full">
-                    লগইন
+                    Login
                 </Button>
                 <p className="mt-6 text-center text-gray-600">
-                    নতুন ইউজার?{' '}
+                    New user?{' '}
                     <Link href="/register" className="text-blue-500 hover:underline">
-                        রেজিস্টার করুন
+                        Register
                     </Link>
                 </p>
             </form>
