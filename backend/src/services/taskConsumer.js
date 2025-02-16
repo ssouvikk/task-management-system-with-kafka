@@ -17,7 +17,7 @@ const startConsumer = async () => {
                 const historyRepository = AppDataSource.getRepository(TaskHistory);
                 const newHistory = historyRepository.create({
                     taskId: taskUpdate.taskId,
-                    change_type: taskUpdate.change_type, // পরিবর্তন: taskUpdate.event এর পরিবর্তে taskUpdate.change_type ব্যবহার করুন
+                    change_type: taskUpdate.change_type, // Use taskUpdate.change_type instead of taskUpdate.event
                     previous_value: taskUpdate.previous_value,
                     new_value: taskUpdate.new_value,
                     timestamp: new Date(),
@@ -28,7 +28,6 @@ const startConsumer = async () => {
             }
 
             const client = connectedClients.get(taskUpdate.userId);
-            // if (client && client.readyState === client.OPEN) {
             if (client && client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify(taskUpdate));
             }

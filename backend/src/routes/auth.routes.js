@@ -4,13 +4,13 @@ const { signup, login, refreshTokenHandler } = require('../controllers/auth.cont
 
 const router = Router();
 
-// ইউজার রেজিস্ট্রেশন রুট
+// User registration route
 router.post('/signup', signup);
 
-// ইউজার লগিন রুট
+// User login route
 router.post('/login', login);
 
-// টোকেন রিফ্রেশ রুট
+// Token refresh route
 router.post('/refresh-token', refreshTokenHandler);
 
-module.exports = router
+module.exports = router;

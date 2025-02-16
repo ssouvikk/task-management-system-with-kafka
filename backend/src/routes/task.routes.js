@@ -1,4 +1,4 @@
-// src/routes/task.routes.ts
+// src/routes/task.routes.js
 const { Router } = require("express");
 const {
     createTask,
@@ -6,14 +6,14 @@ const {
     updateTask,
     deleteTask,
 } = require("../controllers/task.controller");
-const { authenticateToken } = require("../middlewares/auth.middleware")
+const { authenticateToken } = require("../middlewares/auth.middleware");
 
 const router = Router();
 
-// প্রতিটি রাউটে আগে JWT যাচাইকরণ করা হচ্ছে
+// JWT authentication middleware for every route
 router.post("/", authenticateToken, createTask);
 router.get("/", authenticateToken, getTasks);
 router.put("/:id", authenticateToken, updateTask);
 router.delete("/:id", authenticateToken, deleteTask);
 
-module.exports = router
+module.exports = router;
