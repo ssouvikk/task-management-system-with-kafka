@@ -110,4 +110,6 @@ const Register = () => {
   );
 };
 
+Register.noLayout = true; // Layout না দেখানোর জন্য flag
+
 export default Register;

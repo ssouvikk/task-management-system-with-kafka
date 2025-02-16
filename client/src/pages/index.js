@@ -68,25 +68,23 @@ const Dashboard = () => {
     };
 
     return (
-        <Layout>
-            <div className="p-4">
-                <h1 className="text-3xl font-bold mb-4">Task Management Dashboard</h1>
-                <Button
-                    className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-                    onClick={() => { setEditingTask(null); setShowForm(true); }}
-                >
-                    নতুন টাস্ক তৈরি করুন
-                </Button>
-                {showForm && (
-                    <TaskForm
-                        initialData={editingTask}
-                        onSubmit={handleFormSubmit}
-                        onCancel={() => { setShowForm(false); setEditingTask(null); }}
-                    />
-                )}
-                <TaskList onEdit={handleEdit} onDelete={handleDelete} />
-            </div>
-        </Layout>
+        <div className="p-4">
+            <h1 className="text-3xl font-bold mb-4">Task Management Dashboard</h1>
+            <Button
+                className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+                onClick={() => { setEditingTask(null); setShowForm(true); }}
+            >
+                নতুন টাস্ক তৈরি করুন
+            </Button>
+            {showForm && (
+                <TaskForm
+                    initialData={editingTask}
+                    onSubmit={handleFormSubmit}
+                    onCancel={() => { setShowForm(false); setEditingTask(null); }}
+                />
+            )}
+            <TaskList onEdit={handleEdit} onDelete={handleDelete} />
+        </div>
     );
 };
 

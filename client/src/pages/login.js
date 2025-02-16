@@ -80,5 +80,6 @@ const Login = () => {
         </div>
     );
 };
+Login.noLayout = true; // Layout না দেখানোর জন্য flag
 
 export default Login;
