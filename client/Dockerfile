@@ -1,5 +1,4 @@
 # client/Dockerfile
-
 FROM node:20.11.1
 
 WORKDIR /usr/src/app
@@ -7,12 +6,12 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
-# Development-এর জন্য, সোর্স কোড volume-এ মাউন্ট করা থাকলে এই কপি স্টেপটি বিল্ডের সময় করা যেতে পারে,
-# কিন্তু container চালু হওয়ার পরে volume mapping host কোডকে ওভাররাইড করবে।
+# For development, if source code is mounted as volume, this copy step may be done during build,
+# but after container start volume mapping will override host code.
 COPY . .
 
 EXPOSE 3000
 
-# Production build-এর জন্য: RUN npm run build
-# Development mode এ সরাসরি dev server চালান:
+# For production build: RUN npm run build
+# Run dev server directly in development mode:
 CMD ["npm", "run", "dev"]

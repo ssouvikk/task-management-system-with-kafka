@@ -4,10 +4,10 @@ import { toast } from 'react-toastify';
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  // withCredentials: true,  // যদি cookies প্রয়োজন হয়
+  // withCredentials: true,  // if cookies are needed
 });
 
-// Request interceptor: token যোগ করা
+// Request interceptor: add token
 instance.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
@@ -21,10 +21,10 @@ instance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor: 403 পেলে refresh token; অন্যান্য ক্ষেত্রে toast বার্তা দেখানো
+// Response interceptor: if 403 then refresh token; in other cases show toast message
 instance.interceptors.response.use(
   (response) => {
-    // যদি API response-এ message থাকে, তাহলে success toast দেখান
+    // If API response contains message, then show success toast
     if (response.data && response.data.message) {
       toast.success(response.data.message);
     }
@@ -53,7 +53,7 @@ instance.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-    // যদি error response-এ message থাকে, তাহলে error toast দেখান
+    // If error response contains message, then show error toast
     if (error.response && error.response.data && error.response.data.message) {
       toast.error(error.response.data.message);
     }

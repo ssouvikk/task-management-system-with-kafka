@@ -9,15 +9,15 @@ export function withAuth(Component) {
     const router = useRouter();
 
     useEffect(() => {
-      // user state যদি null হয়, অর্থাৎ authentication ফেইল হয়েছে
+      // If user state is null, i.e. authentication failed
       if (user === null) {
         router.push('/login');
       }
     }, [user, router]);
 
-    // যদি user state এখনও undefined, অর্থাৎ authentication status লোড হচ্ছে
+    // If user state is still undefined, i.e. authentication status is loading
     if (user === undefined) {
-      return <div>লোড হচ্ছে...</div>;
+      return <div>Loading...</div>;
     }
 
     return <Component {...props} />;
