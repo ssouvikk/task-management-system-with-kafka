@@ -90,13 +90,21 @@ module.exports = {
     getTasks: async (req, res) => {
         try {
             const { priority, status, dueDate } = req.query;
+            const perPage = Math.min(Number(req.query.perPage) || 10, 100); // সর্বোচ্চ 100
+            const pageNumber = Number(req.query.pageNumber) || 1;
+            const skip = (pageNumber - 1) * perPage;
+    
             const taskRepository = AppDataSource.getRepository(Task);
-
             const query = taskRepository
                 .createQueryBuilder("task")
-                .leftJoinAndSelect("task.createdBy", "user")
-                .where("user.id = :userId", { userId: req.user.id });
-
+                .leftJoinAndSelect("task.createdBy", "user");
+    
+            // যদি ব্যবহারকারী admin না হন, তাহলে শুধু তার টাস্ক দেখানো হবে
+            if (req.user.role !== "admin") {
+                query.where("user.id = :userId", { userId: req.user.id });
+            }
+    
+            // অন্যান্য ফিল্টার যোগ করুন
             if (priority) {
                 query.andWhere("task.priority = :priority", { priority });
             }
@@ -106,14 +114,22 @@ module.exports = {
             if (dueDate) {
                 query.andWhere("DATE(task.dueDate) = DATE(:dueDate)", { dueDate });
             }
-
-            const tasks = await query.getMany();
-            return res.status(200).json({ data: tasks, message: "" });
+    
+            // Pagination: limit এবং offset যোগ করুন
+            query.skip(skip).take(perPage);
+    
+            // টোটাল রেকর্ড সংখ্যা পেতে আলাদা count query
+            const [tasks, total] = await query.getManyAndCount();
+    
+            return res.status(200).json({ 
+                data: { tasks, total, pageNumber, perPage },
+                message: "" 
+            });
         } catch (error) {
             console.error("Error in getTasks:", error);
             return res.status(500).json({ data: null, message: "Server error" });
         }
-    },
+    },    
 
     /**
      * ৩. টাস্ক আপডেট করা
