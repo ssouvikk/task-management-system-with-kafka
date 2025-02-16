@@ -15,7 +15,7 @@ const generateToken = (user) => {
  * @returns {String} JWT Access Token (15 মিনিটের মেয়াদ)
  */
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '15m' });
+  return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1m' });
 }
 
 /**

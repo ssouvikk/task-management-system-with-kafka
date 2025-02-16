@@ -11,13 +11,14 @@ const { producer } = require("../config/kafka");
  * @param {object|null} previousData - আপডেট বা ডিলিটের পূর্বের তথ্য (JSON), যদি থাকে
  */
 const sendTaskUpdateToKafka = async (changeType, task, previousData = null) => {
-    // নতুন মান হিসেবে টাস্কের বর্তমান তথ্য
+    // নতুন মান হিসেবে টাস্কের বর্তমান তথ্য; "taskDeleted" হলে newData = null
     const newData = changeType === "taskDeleted" ? null : {
         title: task.title,
         description: task.description,
         priority: task.priority,
         status: task.status,
         dueDate: task.dueDate,
+        assignedTo: task.assignedTo,
     };
 
     const payload = {
@@ -51,13 +52,13 @@ module.exports = {
         try {
             const { title, description, priority, status, dueDate, assignedTo } = req.body;
             if (!title) {
-                return res.status(400).json({ message: "Title is required" });
+                return res.status(400).json({ data: null, message: "Title is required" });
             }
             if (priority && !Object.values(TaskPriority).includes(priority)) {
-                return res.status(400).json({ message: "Invalid priority value" });
+                return res.status(400).json({ data: null, message: "Invalid priority value" });
             }
             if (status && !Object.values(TaskStatus).includes(status)) {
-                return res.status(400).json({ message: "Invalid status value" });
+                return res.status(400).json({ data: null, message: "Invalid status value" });
             }
 
             const taskRepository = AppDataSource.getRepository(Task);
@@ -73,13 +74,13 @@ module.exports = {
 
             await taskRepository.save(newTask);
 
-            // Kafka-তে "taskCreated" ইভেন্ট (previous_data নেই)
+            // Kafka-তে "taskCreated" ইভেন্ট পাঠানো (previous_value নেই)
             await sendTaskUpdateToKafka("taskCreated", newTask);
 
-            res.status(201).json(newTask);
+            return res.status(201).json({ data: newTask, message: "Task created successfully" });
         } catch (error) {
             console.error("Error in createTask:", error);
-            res.status(500).json({ message: "Server error" });
+            return res.status(500).json({ data: null, message: "Server error" });
         }
     },
 
@@ -107,18 +108,18 @@ module.exports = {
             }
 
             const tasks = await query.getMany();
-            res.status(200).json(tasks);
+            return res.status(200).json({ data: tasks, message: "Tasks retrieved successfully" });
         } catch (error) {
             console.error("Error in getTasks:", error);
-            res.status(500).json({ message: "Server error" });
+            return res.status(500).json({ data: null, message: "Server error" });
         }
     },
 
     /**
      * ৩. টাস্ক আপডেট করা
-     * - আপডেটের পূর্বে পূর্বের তথ্য সংগ্রহ করা (previousData)
+     * - পূর্বের তথ্য সংগ্রহ করা (previousData)
      * - টাস্ক আপডেট করে সেভ করা
-     * - Kafka-তে "taskUpdated" ইভেন্ট পাঠানো, যেখানে previous_value ও new_value উভয়ই অন্তর্ভুক্ত থাকবে
+     * - Kafka-তে "taskUpdated" ইভেন্ট পাঠানো, যেখানে previous_value ও new_value অন্তর্ভুক্ত থাকবে
      */
     updateTask: async (req, res) => {
         try {
@@ -126,10 +127,10 @@ module.exports = {
             const { title, description, priority, status, dueDate, assignedTo } = req.body;
 
             if (priority && !Object.values(TaskPriority).includes(priority)) {
-                return res.status(400).json({ message: "Invalid priority value" });
+                return res.status(400).json({ data: null, message: "Invalid priority value" });
             }
             if (status && !Object.values(TaskStatus).includes(status)) {
-                return res.status(400).json({ message: "Invalid status value" });
+                return res.status(400).json({ data: null, message: "Invalid status value" });
             }
 
             const taskRepository = AppDataSource.getRepository(Task);
@@ -138,10 +139,10 @@ module.exports = {
                 relations: ["createdBy"],
             });
             if (!task) {
-                return res.status(404).json({ message: "Task not found" });
+                return res.status(404).json({ data: null, message: "Task not found" });
             }
             if (task.createdBy.id !== req.user.id && req.user.role !== "admin") {
-                return res.status(403).json({ message: "Not authorized to update this task" });
+                return res.status(403).json({ data: null, message: "Not authorized to update this task" });
             }
 
             // পূর্বের তথ্য সংগ্রহ (previous_value)
@@ -167,16 +168,16 @@ module.exports = {
             // Kafka-তে "taskUpdated" ইভেন্ট পাঠানো, যেখানে previous_value ও new_value অন্তর্ভুক্ত থাকবে
             await sendTaskUpdateToKafka("taskUpdated", task, previousData);
 
-            res.status(200).json(task);
+            return res.status(200).json({ data: task, message: "Task updated successfully" });
         } catch (error) {
             console.error("Error in updateTask:", error);
-            res.status(500).json({ message: "Server error" });
+            return res.status(500).json({ data: null, message: "Server error" });
         }
     },
 
     /**
      * ৪. টাস্ক মুছে ফেলা
-     * - ডিলিটের পূর্বে, পূর্ববর্তী তথ্য সংগ্রহ করা (previousData)
+     * - পূর্বের তথ্য সংগ্রহ করা (previousData)
      * - টাস্ক ডিলিট করা
      * - Kafka-তে "taskDeleted" ইভেন্ট পাঠানো, যেখানে previous_value থাকবে এবং new_value হবে null
      */
@@ -189,10 +190,10 @@ module.exports = {
                 relations: ["createdBy"],
             });
             if (!task) {
-                return res.status(404).json({ message: "Task not found" });
+                return res.status(404).json({ data: null, message: "Task not found" });
             }
             if (task.createdBy.id !== req.user.id && req.user.role !== "admin") {
-                return res.status(403).json({ message: "Not authorized to delete this task" });
+                return res.status(403).json({ data: null, message: "Not authorized to delete this task" });
             }
 
             // পূর্বের তথ্য সংগ্রহ
@@ -202,17 +203,18 @@ module.exports = {
                 priority: task.priority,
                 status: task.status,
                 dueDate: task.dueDate,
+                assignedTo: task.assignedTo,
             };
 
             await taskRepository.remove(task);
 
-            // Kafka-তে "taskDeleted" ইভেন্ট পাঠানো, new_value হিসেবে null পাঠানো যেতে পারে
+            // Kafka-তে "taskDeleted" ইভেন্ট পাঠানো, new_value হিসেবে null
             await sendTaskUpdateToKafka("taskDeleted", { id: taskId, createdBy: { id: task.createdBy.id } }, previousData);
 
-            res.status(200).json({ message: "Task deleted successfully" });
+            return res.status(200).json({ data: null, message: "Task deleted successfully" });
         } catch (error) {
             console.error("Error in deleteTask:", error);
-            res.status(500).json({ message: "Server error" });
+            return res.status(500).json({ data: null, message: "Server error" });
         }
     },
 

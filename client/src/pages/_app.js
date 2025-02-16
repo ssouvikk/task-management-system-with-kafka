@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react';
 import AuthContext from '../context/AuthContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
+// react-toastify import
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 // Global QueryClient instance তৈরির সময় refetchOnWindowFocus false
 const queryClient = new QueryClient({
   defaultOptions: {
