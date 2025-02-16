@@ -9,7 +9,7 @@ const Layout = ({ children }) => {
             <Navbar />
             <div className="flex flex-1">
                 <Sidebar />
-                <main className="flex-1 p-6 bg-gray-50 text-gray-800">
+                <main className="flex-1 p-6 bg-gray-50 text-gray-800" style={{ backgroundColor: '#b2cdee' }}>
                     {children}
                 </main>
             </div>
