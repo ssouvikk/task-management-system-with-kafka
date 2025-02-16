@@ -1,79 +1,91 @@
-// src/components/TaskList.js
-import React, { useState } from 'react'
-import { useQuery } from 'react-query'
-import axiosInstance from '../utils/axiosInstance'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import React, { useState } from 'react';
+import { useQuery } from 'react-query';
+import axiosInstance from '../utils/axiosInstance';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import Select from '@/components/ui/Select'; // আমাদের নতুন reusable Select import
 
+
+// Select component-এর জন্য options গুলি:
+const priorityOptions = [
+  { value: '', label: 'সকল প্রাধান্য' },
+  { value: 'Low', label: 'Low' },
+  { value: 'Medium', label: 'Medium' },
+  { value: 'High', label: 'High' },
+];
+
+const statusOptions = [
+  { value: '', label: 'সকল স্ট্যাটাস' },
+  { value: 'To Do', label: 'To Do' },
+  { value: 'In Progress', label: 'In Progress' },
+  { value: 'Done', label: 'Done' },
+];
+
+const perPageOptions = [
+  { value: 10, label: '10' },
+  { value: 25, label: '25' },
+  { value: 50, label: '50' },
+  { value: 100, label: '100' },
+];
+
+// API থেকে tasks fetch করার function
 const fetchTasks = async (filters) => {
-  const { data } = await axiosInstance.get('/api/tasks', { params: filters })
+  const { data } = await axiosInstance.get('/api/tasks', { params: filters });
   // API response-এ data: { tasks, total, pageNumber, perPage } থাকে
-  return data.data
-}
+  return data.data;
+};
 
 const TaskList = ({ onEdit, onDelete }) => {
-  // প্রথমে শুধুমাত্র ফিল্টারগুলোর জন্য state, যেখানে perPage নির্বাচন টেবিলের নিচে থাকবে
   const [filters, setFilters] = useState({
     priority: '',
     status: '',
     dueDate: '',
     pageNumber: 1,
-  })
+  });
 
-  // আলাদা state perPage এর জন্য (ডিফল্ট 10)
-  const [perPage, setPerPage] = useState(10)
+  const [perPage, setPerPage] = useState(10);
 
-  // Query-তে perPage যুক্ত করে পাঠানো হবে
   const { data: paginatedData, refetch } = useQuery(
     ['tasks', { ...filters, perPage }],
     () => fetchTasks({ ...filters, perPage })
-  )
+  );
 
-  const tasks = paginatedData?.tasks || []
-  const total = paginatedData?.total || 0
-  const pageNumber = paginatedData?.pageNumber || filters.pageNumber
-  const totalPages = Math.ceil(total / perPage)
+  const tasks = paginatedData?.tasks || [];
+  const total = paginatedData?.total || 0;
+  const pageNumber = paginatedData?.pageNumber || filters.pageNumber;
+  const totalPages = Math.ceil(total / perPage);
 
   const handleFilterChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value, pageNumber: 1 })
-  }
+    setFilters({ ...filters, [e.target.name]: e.target.value, pageNumber: 1 });
+  };
 
   const handlePageChange = (newPage) => {
-    setFilters({ ...filters, pageNumber: newPage })
-  }
+    setFilters({ ...filters, pageNumber: newPage });
+  };
 
   const handlePerPageChange = (e) => {
-    setPerPage(Number(e.target.value))
-    // Reset page number to 1 when perPage পরিবর্তন করা হয়
-    setFilters({ ...filters, pageNumber: 1 })
-  }
+    setPerPage(Number(e.target.value));
+    // perPage পরিবর্তনের সাথে পৃষ্ঠা ১ থেকে শুরু হবে
+    setFilters({ ...filters, pageNumber: 1 });
+  };
+
 
   return (
     <div className="mt-6">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">টাস্ক তালিকা</h2>
       <div className="flex flex-wrap gap-2 mb-6">
-        <select
+        <Select
           name="priority"
           value={filters.priority}
           onChange={handleFilterChange}
-          className="border p-2 rounded"
-        >
-          <option value="">সকল প্রাধান্য</option>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </select>
-        <select
+          options={priorityOptions}
+        />
+        <Select
           name="status"
           value={filters.status}
           onChange={handleFilterChange}
-          className="border p-2 rounded"
-        >
-          <option value="">সকল স্ট্যাটাস</option>
-          <option value="To Do">To Do</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Done">Done</option>
-        </select>
+          options={statusOptions}
+        />
         <Input
           type="date"
           name="dueDate"
@@ -126,17 +138,12 @@ const TaskList = ({ onEdit, onDelete }) => {
         <div className="flex flex-col md:flex-row justify-between items-center mt-6">
           <div className="flex items-center space-x-2 mb-4 md:mb-0">
             <label className="text-gray-700">প্রতি পৃষ্ঠায়:</label>
-            <select
+            <Select
               name="perPage"
               value={perPage}
               onChange={handlePerPageChange}
-              className="border p-2 rounded"
-            >
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-            </select>
+              options={perPageOptions}
+            />
           </div>
           <div className="flex items-center space-x-4">
             <Button onClick={() => handlePageChange(pageNumber - 1)} disabled={pageNumber === 1}>
@@ -155,7 +162,7 @@ const TaskList = ({ onEdit, onDelete }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default TaskList
+export default TaskList;
