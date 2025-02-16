@@ -4,21 +4,21 @@ import { createContext, useState } from 'react';
 const NotificationContext = createContext();
 
 export const NotificationProvider = ({ children }) => {
-    const [notificationCount, setNotificationCount] = useState(0);
+  const [notifications, setNotifications] = useState([]);
 
-    const addNotification = () => {
-        setNotificationCount((prev) => prev + 1);
-    };
+  const addNotification = (notification) => {
+    setNotifications(prev => [notification, ...prev]);
+  };
 
-    const resetNotifications = () => {
-        setNotificationCount(0);
-    };
+  const resetNotifications = () => {
+    setNotifications([]);
+  };
 
-    return (
-        <NotificationContext.Provider value={{ notificationCount, addNotification, resetNotifications }}>
-            {children}
-        </NotificationContext.Provider>
-    );
+  return (
+    <NotificationContext.Provider value={{ notifications, addNotification, resetNotifications }}>
+      {children}
+    </NotificationContext.Provider>
+  );
 };
 
 export default NotificationContext;

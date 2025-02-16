@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 const Navbar = () => {
     const { setUser } = useContext(AuthContext);
-    const { notificationCount, resetNotifications } = useContext(NotificationContext);
+    const { notifications } = useContext(NotificationContext);
     const router = useRouter();
 
     const handleLogout = () => {
@@ -21,12 +21,12 @@ const Navbar = () => {
         <nav className="bg-gray-800 text-white p-4 flex justify-between items-center">
             <div className="text-lg font-bold">Task Manager</div>
             <div className="relative">
-                <button onClick={() => { resetNotifications(); router.push('/notifications'); }} className="mr-4">
+                <button onClick={() => { router.push('/notifications'); }} className="mr-4">
                     Notifications
                 </button>
-                {notificationCount > 0 && (
+                {notifications.length > 0 && (
                     <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs px-2">
-                        {notificationCount > 99 ? '99+' : notificationCount}
+                        {notifications.length > 99 ? '99+' : notifications.length}
                     </span>
                 )}
                 <button

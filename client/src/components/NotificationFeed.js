@@ -16,10 +16,10 @@ const NotificationFeed = () => {
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            // Toast দেখান
+            // Toast হিসেবে দেখান
             toast.info(`New Notification: ${data.change_type}`);
-            // Global count update করুন
-            addNotification();
+            // Context-এ নতুন নোটিফিকেশন যোগ করুন
+            addNotification(data);
         };
 
         socket.onclose = () => {
@@ -31,7 +31,7 @@ const NotificationFeed = () => {
         };
     }, [addNotification]);
 
-    return null; // এই কম্পোনেন্টটি শুধু নোটিফিকেশন handle করবে, UI render করবে না।
+    return null; // এই কম্পোনেন্টটি UI render করবে না, শুধু নোটিফিকেশন handle করবে।
 };
 
 export default NotificationFeed;
