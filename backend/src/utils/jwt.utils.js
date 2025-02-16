@@ -2,20 +2,13 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const generateToken = (user) => {
-  return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
-};
-
-
 /**
  * অ্যাক্সেস টোকেন জেনারেট করার ফাংশন
  * @param {Object} user - ইউজারের ডাটা (id ও email)
  * @returns {String} JWT Access Token (15 মিনিটের মেয়াদ)
  */
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1m' });
+  return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '15m' });
 }
 
 /**
@@ -28,5 +21,5 @@ function generateRefreshToken(user) {
 }
 
 module.exports = {
-  generateAccessToken, generateRefreshToken, generateToken
+  generateAccessToken, generateRefreshToken
 }

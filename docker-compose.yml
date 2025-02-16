@@ -62,7 +62,6 @@ services:
     restart: always
     volumes:
       - ./backend:/usr/src/app
-    command: sh -c "npm run migrate && npm run dev"
 
   # Frontend সার্ভিস (Next.js)
   frontend:

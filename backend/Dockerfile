@@ -19,4 +19,4 @@ COPY . .
 EXPOSE 5000
 
 # Step 7: অ্যাপ চালু করুন
-CMD ["npm", "run", "dev"]
+CMD ["sh", "-c", "sleep 5 && node seed.js && npm run dev"]
