@@ -6,25 +6,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 const fetchTasks = async (filters) => {
-  // API call-এ perPage ও pageNumber query parameters যোগ করুন
   const { data } = await axiosInstance.get('/api/tasks', { params: filters });
-  // এখন API response-এ data: { tasks, total, pageNumber, perPage } আছে
+  // API response-এ data: { tasks, total, pageNumber, perPage } আছে
   return data.data;
 };
 
 const TaskList = ({ onEdit, onDelete }) => {
-  // Filter state-এ pagination values যুক্ত করুন
   const [filters, setFilters] = useState({
     priority: '',
     status: '',
     dueDate: '',
-    perPage: 2,      // ডিফল্ট 10
+    perPage: 10,      // ডিফল্ট 10
     pageNumber: 1,    // ডিফল্ট 1
   });
 
   const { data: paginatedData, refetch } = useQuery(['tasks', filters], () => fetchTasks(filters));
 
-  // paginatedData থেকে tasks, total, pageNumber ও perPage নিন
+  // Response থেকে pagination তথ্য extract করা
   const tasks = paginatedData?.tasks || [];
   const total = paginatedData?.total || 0;
   const pageNumber = paginatedData?.pageNumber || filters.pageNumber;
@@ -32,7 +30,7 @@ const TaskList = ({ onEdit, onDelete }) => {
   const totalPages = Math.ceil(total / perPage);
 
   const handleFilterChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value, pageNumber: 1 }); // নতুন filter এ page reset করুন
+    setFilters({ ...filters, [e.target.name]: e.target.value, pageNumber: 1 });
   };
 
   const handlePageChange = (newPage) => {
@@ -76,19 +74,18 @@ const TaskList = ({ onEdit, onDelete }) => {
           className="border p-2 rounded"
         />
 
-        <Input
-          type="number"
+        {/* perPage এর জন্য select dropdown */}
+        <select
           name="perPage"
           value={filters.perPage}
-          onChange={(e) => {
-            const value = Math.min(Number(e.target.value) || 10, 100);
-            setFilters({ ...filters, perPage: value, pageNumber: 1 });
-          }}
-          placeholder="Per Page"
-          className="border p-2 rounded w-24"
-          min="1"
-          max="100"
-        />
+          onChange={handleFilterChange}
+          className="border p-2 rounded"
+        >
+          <option value={10}>10</option>
+          <option value={25}>25</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </select>
 
         <Button onClick={refetch}>ফিল্টার করুন</Button>
       </div>
