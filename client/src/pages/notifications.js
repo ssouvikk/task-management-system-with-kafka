@@ -19,8 +19,10 @@ const Notifications = () => {
             ) : (
                 <ul className="space-y-4">
                     {notifications.map((notif, index) => (
-                        <li key={index} className="p-4 border rounded shadow bg-white">
-                            <p className="font-semibold text-gray-800">ইভেন্ট: {notif.change_type}</p>
+                        <li key={index} className="p-4 border rounded-lg shadow bg-white">
+                            <p className="font-semibold text-gray-800">
+                                ইভেন্ট: {notif.change_type}
+                            </p>
                             <p className="text-gray-700">টাস্ক আইডি: {notif.taskId}</p>
                             <p className="text-gray-600">
                                 Updated: {new Date(notif.updatedAt).toLocaleString()}

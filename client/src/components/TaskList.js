@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input'
 
 const fetchTasks = async (filters) => {
   const { data } = await axiosInstance.get('/api/tasks', { params: filters })
-  // API response-এ data: { tasks, total, pageNumber, perPage } থাকে
   return data.data
 }
 
@@ -51,7 +50,6 @@ const TaskList = ({ onEdit, onDelete }) => {
           <option value="Medium">Medium</option>
           <option value="High">High</option>
         </select>
-
         <select
           name="status"
           value={filters.status}
@@ -63,7 +61,6 @@ const TaskList = ({ onEdit, onDelete }) => {
           <option value="In Progress">In Progress</option>
           <option value="Done">Done</option>
         </select>
-
         <Input
           type="date"
           name="dueDate"
@@ -72,7 +69,6 @@ const TaskList = ({ onEdit, onDelete }) => {
           placeholder="Due Date"
           className="border p-2 rounded"
         />
-
         <select
           name="perPage"
           value={filters.perPage}
@@ -84,7 +80,6 @@ const TaskList = ({ onEdit, onDelete }) => {
           <option value={50}>50</option>
           <option value={100}>100</option>
         </select>
-
         <Button onClick={refetch}>ফিল্টার করুন</Button>
       </div>
 

@@ -40,15 +40,29 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
         <form onSubmit={handleSubmit} className="p-6 border rounded-lg bg-white shadow-md mb-6">
             <div className="mb-4">
                 <label className="block text-gray-700 mb-2">শিরোনাম</label>
-                <Input name="title" value={formData.title} onChange={handleChange} required />
+                <Input
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                />
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700 mb-2">বিবরণ</label>
-                <Textarea name="description" value={formData.description} onChange={handleChange} />
+                <Textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                />
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700 mb-2">প্রাধান্য</label>
-                <select name="priority" value={formData.priority} onChange={handleChange} className="border p-2 rounded w-full">
+                <select
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleChange}
+                    className="border p-2 rounded w-full"
+                >
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
                     <option value="High">High</option>
@@ -56,7 +70,12 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700 mb-2">স্ট্যাটাস</label>
-                <select name="status" value={formData.status} onChange={handleChange} className="border p-2 rounded w-full">
+                <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="border p-2 rounded w-full"
+                >
                     <option value="To Do">To Do</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Done">Done</option>
@@ -64,11 +83,21 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700 mb-2">Due Date</label>
-                <Input type="date" name="dueDate" value={formData.dueDate} onChange={handleChange} />
+                <Input
+                    type="date"
+                    name="dueDate"
+                    value={formData.dueDate}
+                    onChange={handleChange}
+                />
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700 mb-2">অ্যাসাইন করা (Assigned To)</label>
-                <Input name="assignedTo" value={formData.assignedTo} onChange={handleChange} placeholder="Assigned User" />
+                <Input
+                    name="assignedTo"
+                    value={formData.assignedTo}
+                    onChange={handleChange}
+                    placeholder="Assigned User"
+                />
             </div>
             <div className="flex justify-end mt-6">
                 <Button type="submit" className="mr-2">সেভ করুন</Button>
