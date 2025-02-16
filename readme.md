@@ -1,66 +1,62 @@
-নিচে আপনার অ্যাপ্লিকেশনের জন্য একটি বিস্তারিত README.md ফাইল প্রদান করা হলো:
-
----
-
 # Express.js API Application
 
-এই প্রজেক্টটি একটি Express.js ভিত্তিক API সার্ভার যা ইউজার অথেনটিকেশন, টাস্ক ম্যানেজমেন্ট এবং WebSocket-এর মাধ্যমে রিয়েল-টাইম নোটিফিকেশন সাপোর্ট প্রদান করে। এটি Docker ব্যবহার করে চালু করা হয় এবং PostgreSQL, Kafka ও Zookeeper এর সাথে ইন্টিগ্রেটেড।
+This project is an Express.js-based API server that supports user authentication, task management, and real-time notifications via WebSocket. It is deployed using Docker and integrates with PostgreSQL, Kafka, and Zookeeper.
 
-## বৈশিষ্ট্যসমূহ
+## Features
 
-- **ইউজার অথেনটিকেশন:**  
-  - ইউজার রেজিস্ট্রেশন (/api/auth/signup)
-  - ইউজার লগইন (/api/auth/login)
-  - JWT টোকেন রিফ্রেশ (/api/auth/refresh-token)
+- **User Authentication:**  
+  - User registration (/api/auth/signup)
+  - User login (/api/auth/login)
+  - JWT token refresh (/api/auth/refresh-token)
 
-- **টাস্ক ম্যানেজমেন্ট:**  
-  - নতুন টাস্ক তৈরি, টাস্ক লিস্ট রিট্রিভ, আপডেট ও ডিলিট (/api/tasks)
+- **Task Management:**  
+  - Create, retrieve, update, and delete tasks (/api/tasks)
 
-- **নোটিফিকেশন:**  
-  - WebSocket-এর মাধ্যমে রিয়েল-টাইম নোটিফিকেশন (যেমন, টাস্ক স্ট্যাটাস পরিবর্তন)
-  - API রুট (/simulate-task-update) এর মাধ্যমে নোটিফিকেশন simulate করা
+- **Notifications:**  
+  - Real-time notifications via WebSocket (e.g., task status updates)
+  - Simulate notifications through the API route (/simulate-task-update)
 
-- **Swagger API ডকুমেন্টেশন:**  
-  - `/api-docs` রাউট থেকে API ডকুমেন্টেশন দেখুন
+- **Swagger API Documentation:**  
+  - View API documentation at `/api-docs`
 
-## প্রজেক্ট স্ট্রাকচার
+## Project Structure
 
 ```
 /backend
  ├── docs
- │     └── swagger.yaml         # Swagger API স্পেসিফিকেশন
+ │     └── swagger.yaml         # Swagger API specification
  ├── src
- │     ├── controllers          # কন্ট্রোলার ফাইলসমূহ
- │     ├── models               # TypeORM এন্টিটি ফাইলসমূহ (User, Task, TaskHistory)
- │     ├── routes               # API রাউট ফাইলসমূহ (auth.routes.js, task.routes.ts)
- │     ├── services             # Kafka Consumer ও অন্যান্য সার্ভিস
- │     ├── config               # ডাটাবেজ, Kafka, ও Socket ক্লায়েন্ট কনফিগারেশন
- │     └── server.js            # এপ্লিকেশন এন্ট্রি পয়েন্ট
+ │     ├── controllers          # Controller files
+ │     ├── models               # TypeORM entity files (User, Task, TaskHistory)
+ │     ├── routes               # API route files (auth.routes.js, task.routes.ts)
+ │     ├── services             # Kafka Consumer and other services
+ │     ├── config               # Database, Kafka, and Socket client configuration
+ │     └── server.js            # Application entry point
  ├── Dockerfile                 # Backend Dockerfile
  ├── package.json
- └── ... 
+ └── ...
 ```
 
-## ইনস্টলেশন ও কনফিগারেশন
+## Installation & Configuration
 
-### স্থানীয় পরিবেশে চালানোর জন্য
+### Running Locally
 
-1. **কোড ক্লোন করুন:**
+1. **Clone the Repository:**
 
    ```bash
    git clone <repository-url>
    cd backend
    ```
 
-2. **নোড প্যাকেজ ইনস্টল করুন:**
+2. **Install Node Packages:**
 
    ```bash
    npm install
    ```
 
-3. **পরিবেশ ভেরিয়েবল (.env) তৈরি করুন:**
+3. **Create Environment Variables (.env):**
 
-   উদাহরণস্বরূপ, `.env` ফাইলের কিছু প্রাথমিক কনফিগারেশন হতে পারে:
+   Example configuration for the `.env` file:
    ```env
    PORT=5000
    JWT_SECRET=your_jwt_secret
@@ -69,67 +65,71 @@
    KAFKA_BROKER=kafka:9092
    ```
 
-4. **Swagger API ডকুমেন্টেশন দেখার জন্য:**
+4. **View Swagger API Documentation:**
 
-   সার্ভার চালু হওয়ার পর ব্রাউজারে যান:
+   Once the server is running, access API documentation in your browser:
    ```
    http://localhost:5000/api-docs
    ```
 
-5. **সার্ভার চালু করুন:**
+5. **Start the Server:**
 
    ```bash
    npm run dev
    ```
 
-### Docker ব্যবহার করে চালানোর জন্য
+### Running with Docker
 
-এই প্রজেক্টটি Docker Compose এর মাধ্যমে চালু করা যায়।
+This project can be run using Docker Compose.
 
-1. **Docker ও Docker Compose ইনস্টল করুন:**  
-   আপনার সিস্টেমে Docker ও Docker Compose ইনস্টল আছে কিনা তা নিশ্চিত করুন।
+1. **Install Docker and Docker Compose:**  
+   Ensure that Docker and Docker Compose are installed on your system.
 
-2. **Docker Compose চালু করুন:**
+2. **Start Docker Compose:**
 
-   প্রজেক্টের মূল ডিরেক্টরিতে যান যেখানে `docker-compose.yml` ফাইল আছে এবং কমান্ড চালান:
+   Navigate to the project root directory where `docker-compose.yml` is located and run:
    ```bash
    docker-compose up --build
    ```
-   এটি PostgreSQL, Zookeeper, Kafka, Backend (Express.js) এবং Frontend (Next.js) সার্ভিসগুলো চালু করবে।
+   This will start PostgreSQL, Zookeeper, Kafka, the Backend (Express.js), and the Frontend (Next.js).
 
-3. **পরিবেশ ভেরিয়েবল ও ভলিউম:**  
-   - Dockerfile-এ `COPY` কমান্ডের মাধ্যমে সকল কোড ও `docs` ফোল্ডার অন্তর্ভুক্ত হচ্ছে।
-   - Docker Compose ফাইলের `volumes` সেটআপ নিশ্চিত করে যে কোড পরিবর্তনগুলি কন্টেইনারে রিফ্লেক্ট হবে।
+3. **Environment Variables & Volumes:**  
+   - The `COPY` command in the Dockerfile ensures all code and the `docs` folder are included.
+   - The `volumes` setup in the Docker Compose file ensures that code changes reflect in the container.
 
-## ব্যবহারের নির্দেশিকা
+## Usage Guide
 
-- **API রাউটসমূহ:**  
-  - ইউজার অথেনটিকেশন ও টাস্ক ম্যানেজমেন্ট সম্পর্কিত এন্ডপয়েন্টসমূহ `/api/auth` ও `/api/tasks` রাউটের মাধ্যমে অ্যাক্সেস করা যাবে।
+- **API Routes:**  
+  - User authentication and task management endpoints are accessible via `/api/auth` and `/api/tasks`.
   
-- **Swagger ডকুমেন্টেশন:**  
-  - `/api-docs` রাউট থেকে API ডকুমেন্টেশন দেখুন।
+- **Swagger Documentation:**  
+  - View API documentation at `/api-docs`.
 
-- **নোটিফিকেশন সিমুলেশন:**  
-  - `/simulate-task-update` রাউটে POST রিকোয়েস্ট পাঠিয়ে নির্দিষ্ট ইউজারের সাথে নোটিফিকেশন সিমুলেট করা যাবে।
+- **Notification Simulation:**  
+  - Send a POST request to `/simulate-task-update` to simulate a notification for a specific user.
 
-## সমস্যা সমাধান ও টিপস
+## Troubleshooting & Tips
 
-- **Swagger ফাইল না পাওয়ার সমস্যা:**  
-  - নিশ্চিত করুন যে `docs/swagger.yaml` ফাইলটি সঠিক ডিরেক্টরিতে আছে এবং `server.js` এ ফাইল পাথ সঠিকভাবে উল্লেখ করা হয়েছে। উদাহরণস্বরূপ:
+- **Swagger File Not Found Issue:**  
+  - Ensure that `docs/swagger.yaml` is correctly placed and referenced in `server.js`. Example:
     ```javascript
     const swaggerDocument = YAML.load(path.join(__dirname, '..', 'docs', 'swagger.yaml'));
     ```
 
-- **Kafka সম্পর্কিত ওয়ার্নিং:**  
-  - KafkaJS এর নতুন ডিফল্ট পার্টিশনার পরিবর্তন সম্পর্কে সতর্কবার্তা দেখায়। যদি আগের ভার্সনের পার্টিশনার ব্যবহার করতে চান, তাহলে প্রযোজ্য অপশন যুক্ত করুন বা পরিবেশ ভেরিয়েবল `KAFKAJS_NO_PARTITIONER_WARNING=1` সেট করুন।
+- **Kafka Warning Messages:**  
+  - KafkaJS might display warnings regarding default partitioners. If needed, disable warnings by setting the environment variable:
+    ```env
+    KAFKAJS_NO_PARTITIONER_WARNING=1
+    ```
 
-- **Docker Volumes ও ক্যাশিং:**  
-  - Docker Volumes ব্যবহার করে কোডের আপডেট কন্টেইনারে প্রতিফলিত হচ্ছে কিনা তা নিশ্চিত করুন।
+- **Docker Volumes & Caching:**  
+  - Ensure that Docker Volumes are set up correctly so that code changes reflect in the container.
 
-## লাইসেন্স
+## License
 
-এই প্রজেক্টটি MIT লাইসেন্সের অধীনে বিতরণ করা হয়েছে। বিস্তারিত লাইসেন্স তথ্যের জন্য `LICENSE` ফাইল দেখুন (যদি থাকে)।
+This project is distributed under the MIT License. For more details, refer to the `LICENSE` file (if available).
 
 ---
 
-এই README ফাইলটি আপনার অ্যাপ্লিকেশন সংক্রান্ত সকল প্রাথমিক তথ্য, ইনস্টলেশন গাইড, ব্যবহার নির্দেশিকা এবং সমস্যা সমাধানের টিপস প্রদান করে। যদি কোন প্রশ্ন থাকে বা আরও সহায়তা প্রয়োজন হয়, তাহলে যোগাযোগ করুন।
+This README file provides all the necessary information about the application, installation guide, usage instructions, and troubleshooting tips. If you have any questions or need further assistance, feel free to reach out.
+
