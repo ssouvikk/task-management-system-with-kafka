@@ -1,126 +1,100 @@
 # Task Management System
 
 ## Project Overview
-
-The **Task Management System** is a robust and scalable API built with **Express.js**. It provides a structured way to manage user authentication, task tracking, and real-time notifications using WebSockets. The application is containerized with **Docker** and integrated with **PostgreSQL**, **Kafka**, and **Zookeeper** to ensure high performance and reliability.
+The **Task Management System** is a powerful and scalable task management solution built with **Express.js**, **PostgreSQL**, **Kafka**, and **WebSockets**. It allows users to create, manage, and track tasks in real-time with notification support.
 
 ## Features
+- **User Authentication**
+  - User Registration & Login (JWT-based authentication)
+  - Secure password hashing
+  - Profile management (update username, email, password, and profile picture)
+  
+- **Task Management**
+  - Create, update, delete tasks
+  - Assign tasks to users
+  - Track task status (To Do, In Progress, Done)
+  - Filter and search tasks by priority, status, and due date
 
-- **User Authentication:**
-  - User registration (`/api/auth/signup`)
-  - User login (`/api/auth/login`)
-  - JWT-based authentication & token refresh (`/api/auth/refresh-token`)
+- **Real-time Notifications**
+  - WebSocket-based real-time notifications for task updates
+  - Kafka-based event-driven task management
 
-- **Task Management:**
-  - Create, retrieve, update, and delete tasks (`/api/tasks`)
-
-- **Real-Time Notifications:**
-  - WebSocket-based live updates for task status changes
-  - Simulate notifications via API endpoint (`/simulate-task-update`)
-
-- **API Documentation:**
-  - Available via Swagger UI at `/api-docs`
+- **Admin Features (Optional)**
+  - Manage all users and tasks
+  - View Kafka event logs
+  - Broadcast system messages to users
 
 ## Installation & Setup
-
 ### Prerequisites
-
 Ensure you have the following installed:
-- [Node.js](https://nodejs.org/) (v16 or later)
-- [Docker & Docker Compose](https://www.docker.com/)
-- [PostgreSQL](https://www.postgresql.org/)
-- [Kafka & Zookeeper](https://kafka.apache.org/)
+- Node.js (>=16)
+- Docker & Docker Compose
+- PostgreSQL
+- Kafka & Zookeeper
 
 ### Local Setup
-
-1. **Clone the Repository:**
-   ```sh
+1. **Clone the Repository**
+   ```bash
    git clone <repository-url>
-   cd backend
+   cd task-management-backend
    ```
-
-2. **Install Dependencies:**
-   ```sh
+2. **Install Dependencies**
+   ```bash
    npm install
    ```
-
-3. **Set Up Environment Variables:**
-   Create a `.env` file and configure the following:
+3. **Create a `.env` File** with the following configurations:
    ```env
    PORT=5000
    JWT_SECRET=your_jwt_secret
-   JWT_REFRESH_SECRET=your_jwt_refresh_secret
-   DATABASE_URL=postgres://user:password@localhost:5432/task_db
-   KAFKA_BROKER=localhost:9092
+   DATABASE_URL=postgres://username:password@localhost:5432/taskdb
+   KAFKA_BROKER=kafka:9092
    ```
-
-4. **Start the Application:**
-   ```sh
+4. **Run the Application**
+   ```bash
    npm run dev
    ```
+5. **Access API Documentation**
+   Open `http://localhost:5000/api-docs` in your browser.
 
-5. **Access API Documentation:**
-   Open in your browser:
-   ```
-   http://localhost:5000/api-docs
-   ```
-
-### Docker Deployment
-
-1. **Build and Run Containers:**
-   ```sh
+### Running with Docker
+1. **Build and Start Services**
+   ```bash
    docker-compose up --build
    ```
+2. The backend, database, Kafka, and WebSockets will be running in Docker containers.
 
-2. **Verify Running Containers:**
-   ```sh
-   docker ps
-   ```
-
-3. **Access API & Services:**
-   - API Base URL: `http://localhost:5000`
-   - API Docs: `http://localhost:5000/api-docs`
+## API Documentation
+For detailed API endpoints and usage, refer to the **Swagger API Documentation**:
+```
+http://localhost:5000/api-docs
+```
 
 ## Deployment Instructions
-
-To deploy the Task Management System in a production environment:
-
-1. **Prepare the Server:**
-   - Install Docker & Docker Compose
-   - Configure firewall and expose necessary ports
-
-2. **Clone the Repository & Set Up Environment:**
-   ```sh
-   git clone <repository-url>
-   cd backend
-   nano .env  # Update environment variables
+### Deploying with Docker
+1. **Build the Docker Image**
+   ```bash
+   docker build -t task-management-api .
+   ```
+2. **Run the Container**
+   ```bash
+   docker run -p 5000:5000 --env-file .env task-management-api
    ```
 
-3. **Run Application Using Docker:**
-   ```sh
-   docker-compose up --build -d
-   ```
-
-4. **Monitor Logs (Optional):**
-   ```sh
-   docker-compose logs -f
-   ```
+### Deploying to Cloud (e.g., AWS, DigitalOcean, Heroku)
+- Use a managed PostgreSQL service.
+- Deploy Kafka using a cloud provider like Confluent Cloud.
+- Use CI/CD pipelines for automated deployment.
 
 ## Tech Stack
-
 - **Backend:** Node.js, Express.js
-- **Database:** PostgreSQL
-- **Messaging & Streaming:** Kafka, Zookeeper
-- **Authentication:** JWT
-- **Real-Time Updates:** WebSockets
-- **Containerization:** Docker, Docker Compose
-- **Documentation:** Swagger
+- **Database:** PostgreSQL (TypeORM)
+- **Message Broker:** Kafka
+- **Real-time:** WebSockets
+- **Authentication:** JWT (JSON Web Token)
+- **Containerization:** Docker & Docker Compose
 
 ## License
-
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the **MIT License**. See the `LICENSE` file for details.
 
 ---
-
-For any queries or contributions, feel free to raise an issue or submit a pull request!
-
+Let me know if you need any changes or additions! 🚀
