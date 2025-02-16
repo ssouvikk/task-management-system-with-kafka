@@ -15,7 +15,7 @@ const connectKafka = async () => {
   console.log("🔗 Kafka Connected");
 };
 
-// connectKafka();
+connectKafka();
 
 
 module.exports = { kafka, producer, consumer, connectKafka };
