@@ -34,9 +34,9 @@ const Register = () => {
       const res = await axiosInstance.post('/api/auth/signup', { username, email, password });
       const data = res.data;
       if (res.status === 201) {
-        localStorage.setItem('token', data.accessToken);
-        localStorage.setItem('newRefreshToken', data.accessnewRefreshToken);
-        setUser({ token: data.accessToken });
+        localStorage.setItem('token', data.data.accessToken);
+        localStorage.setItem('refreshToken', data.data.refreshToken);
+        setUser({ token: data.data.accessToken });
         router.push('/');
       }
     } catch (err) {

@@ -38,7 +38,7 @@ instance.interceptors.response.use(
         const refreshToken = localStorage.getItem('refreshToken');
         const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh-token`, { token: refreshToken });
         if (res.status === 200) {
-          const { accessToken, refreshToken: newRefreshToken } = res.data;
+          const { accessToken, refreshToken: newRefreshToken } = res.data.data;
           localStorage.setItem('token', accessToken);
           localStorage.setItem('refreshToken', newRefreshToken);
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;

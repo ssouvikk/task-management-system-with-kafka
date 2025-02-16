@@ -26,9 +26,9 @@ const Login = () => {
             const res = await axiosInstance.post('/api/auth/login', { email, password });
             const data = res.data;
             if (res.status === 200) {
-                localStorage.setItem('token', data.accessToken);
-                localStorage.setItem('newRefreshToken', data.accessnewRefreshToken);
-                setUser({ token: data.accessToken });
+                localStorage.setItem('token', data.data.accessToken);
+                localStorage.setItem('refreshToken', data.data.refreshToken);
+                setUser({ token: data.data.accessToken });
                 router.push('/');
             }
         } catch (err) {

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 
 const fetchTasks = async (filters) => {
   const { data } = await axiosInstance.get('/api/tasks', { params: filters });
-  return data;
+  return data.data;
 };
 
 const TaskList = ({ onEdit, onDelete }) => {
