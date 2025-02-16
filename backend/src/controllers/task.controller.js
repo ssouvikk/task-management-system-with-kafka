@@ -1,17 +1,16 @@
 // src/controllers/task.controller.js
-
 const { AppDataSource } = require("../config/db");
 const { Task, TaskPriority, TaskStatus } = require("../models/task.entity");
 const { producer } = require("../config/kafka");
 
 /**
- * Kafka-তে ইভেন্ট পাঠানোর ফাংশন
- * @param {string} changeType - ইভেন্টের ধরন (উদাহরণস্বরূপ, "taskCreated", "taskUpdated", "taskDeleted")
- * @param {object} task - টাস্ক অবজেক্ট (যেখানে 'createdBy' থেকে userId নেওয়া হবে)
- * @param {object|null} previousData - আপডেট বা ডিলিটের পূর্বের তথ্য (JSON), যদি থাকে
+ * Function to send event to Kafka
+ * @param {string} changeType - Type of event (e.g., "taskCreated", "taskUpdated", "taskDeleted")
+ * @param {object} task - Task object (from which 'createdBy' contains the user ID)
+ * @param {object|null} previousData - Previous data (JSON) if available for update or delete
  */
 const sendTaskUpdateToKafka = async (changeType, task, previousData = null) => {
-    // নতুন মান হিসেবে টাস্কের বর্তমান তথ্য; "taskDeleted" হলে newData = null
+    // Use current task data as new value; for "taskDeleted", newData = null
     const newData = changeType === "taskDeleted" ? null : {
         title: task.title,
         description: task.description,
@@ -22,12 +21,12 @@ const sendTaskUpdateToKafka = async (changeType, task, previousData = null) => {
     };
 
     const payload = {
-        change_type: changeType,        // ইভেন্টের ধরন
-        taskId: task.id,                // টাস্ক আইডি
-        userId: task.createdBy.id,      // টাস্কের ক্রিয়েটর এর আইডি
-        previous_value: previousData,   // পূর্বের মান (যদি থাকে)
-        new_value: newData,             // নতুন মান
-        updatedAt: new Date(),          // ইভেন্টের সময়
+        change_type: changeType,        // Type of event
+        taskId: task.id,                // Task ID
+        userId: task.createdBy.id,      // Creator's user ID
+        previous_value: previousData,   // Previous value (if available)
+        new_value: newData,             // New value
+        updatedAt: new Date(),          // Event time
     };
 
     await producer.send({
@@ -44,9 +43,9 @@ const sendTaskUpdateToKafka = async (changeType, task, previousData = null) => {
 module.exports = {
 
     /**
-     * ১. নতুন টাস্ক তৈরি করা
-     * - ইনপুট যাচাই করে, নতুন টাস্ক তৈরি ও সেভ করা
-     * - Kafka-তে "taskCreated" ইভেন্ট পাঠানো
+     * 1. Create a new task
+     * - Validate input, create and save the new task
+     * - Send a "taskCreated" event to Kafka
      */
     createTask: async (req, res) => {
         try {
@@ -68,13 +67,13 @@ module.exports = {
                 priority: priority || TaskPriority.MEDIUM,
                 status: status || TaskStatus.TODO,
                 dueDate: dueDate ? new Date(dueDate) : null,
-                createdBy: req.user, // JWT middleware দ্বারা সেট করা user object
+                createdBy: req.user, // User object set by JWT middleware
                 assignedTo,
             });
 
             await taskRepository.save(newTask);
 
-            // Kafka-তে "taskCreated" ইভেন্ট পাঠানো (previous_value নেই)
+            // Send a "taskCreated" event to Kafka (no previous_value)
             await sendTaskUpdateToKafka("taskCreated", newTask);
 
             return res.status(201).json({ data: newTask, message: "Task created successfully" });
@@ -85,26 +84,26 @@ module.exports = {
     },
 
     /**
-     * ২. ইউজার-সুনির্দিষ্ট টাস্ক রিট্রিভ করা
+     * 2. Retrieve tasks specific to the user
      */
     getTasks: async (req, res) => {
         try {
             const { priority, status, dueDate } = req.query;
-            const perPage = Math.min(Number(req.query.perPage) || 10, 100); // সর্বোচ্চ 100
+            const perPage = Math.min(Number(req.query.perPage) || 10, 100); // Maximum 100
             const pageNumber = Number(req.query.pageNumber) || 1;
             const skip = (pageNumber - 1) * perPage;
-    
+
             const taskRepository = AppDataSource.getRepository(Task);
             const query = taskRepository
                 .createQueryBuilder("task")
                 .leftJoinAndSelect("task.createdBy", "user");
-    
-            // যদি ব্যবহারকারী admin না হন, তাহলে শুধু তার টাস্ক দেখানো হবে
+
+            // If the user is not admin, show only their tasks
             if (req.user.role !== "admin") {
                 query.where("user.id = :userId", { userId: req.user.id });
             }
-    
-            // অন্যান্য ফিল্টার যোগ করুন
+
+            // Add additional filters
             if (priority) {
                 query.andWhere("task.priority = :priority", { priority });
             }
@@ -114,28 +113,28 @@ module.exports = {
             if (dueDate) {
                 query.andWhere("DATE(task.dueDate) = DATE(:dueDate)", { dueDate });
             }
-    
-            // Pagination: limit এবং offset যোগ করুন
+
+            // Pagination: add limit and offset
             query.skip(skip).take(perPage);
-    
-            // টোটাল রেকর্ড সংখ্যা পেতে আলাদা count query
+
+            // Execute count query to get total records
             const [tasks, total] = await query.getManyAndCount();
-    
-            return res.status(200).json({ 
+
+            return res.status(200).json({
                 data: { tasks, total, pageNumber, perPage },
-                message: "" 
+                message: ""
             });
         } catch (error) {
             console.error("Error in getTasks:", error);
             return res.status(500).json({ data: null, message: "Server error" });
         }
-    },    
+    },
 
     /**
-     * ৩. টাস্ক আপডেট করা
-     * - পূর্বের তথ্য সংগ্রহ করা (previousData)
-     * - টাস্ক আপডেট করে সেভ করা
-     * - Kafka-তে "taskUpdated" ইভেন্ট পাঠানো, যেখানে previous_value ও new_value অন্তর্ভুক্ত থাকবে
+     * 3. Update a task
+     * - Retrieve previous data
+     * - Update and save the task
+     * - Send a "taskUpdated" event to Kafka with previous_value and new_value
      */
     updateTask: async (req, res) => {
         try {
@@ -161,7 +160,7 @@ module.exports = {
                 return res.status(403).json({ data: null, message: "Not authorized to update this task" });
             }
 
-            // পূর্বের তথ্য সংগ্রহ (previous_value)
+            // Retrieve previous data
             const previousData = {
                 title: task.title,
                 description: task.description,
@@ -171,7 +170,7 @@ module.exports = {
                 assignedTo: task.assignedTo,
             };
 
-            // টাস্কের পরিবর্তনসমূহ আপডেট করা
+            // Update task fields
             if (title !== undefined) task.title = title;
             if (description !== undefined) task.description = description;
             if (priority !== undefined) task.priority = priority;
@@ -181,7 +180,7 @@ module.exports = {
 
             await taskRepository.save(task);
 
-            // Kafka-তে "taskUpdated" ইভেন্ট পাঠানো, যেখানে previous_value ও new_value অন্তর্ভুক্ত থাকবে
+            // Send a "taskUpdated" event to Kafka with previous_value and new_value
             await sendTaskUpdateToKafka("taskUpdated", task, previousData);
 
             return res.status(200).json({ data: task, message: "Task updated successfully" });
@@ -192,10 +191,10 @@ module.exports = {
     },
 
     /**
-     * ৪. টাস্ক মুছে ফেলা
-     * - পূর্বের তথ্য সংগ্রহ করা (previousData)
-     * - টাস্ক ডিলিট করা
-     * - Kafka-তে "taskDeleted" ইভেন্ট পাঠানো, যেখানে previous_value থাকবে এবং new_value হবে null
+     * 4. Delete a task
+     * - Retrieve previous data
+     * - Delete the task
+     * - Send a "taskDeleted" event to Kafka with previous_value and new_value as null
      */
     deleteTask: async (req, res) => {
         try {
@@ -212,7 +211,7 @@ module.exports = {
                 return res.status(403).json({ data: null, message: "Not authorized to delete this task" });
             }
 
-            // পূর্বের তথ্য সংগ্রহ
+            // Retrieve previous data
             const previousData = {
                 title: task.title,
                 description: task.description,
@@ -224,7 +223,7 @@ module.exports = {
 
             await taskRepository.remove(task);
 
-            // Kafka-তে "taskDeleted" ইভেন্ট পাঠানো, new_value হিসেবে null
+            // Send a "taskDeleted" event to Kafka with new_value as null
             await sendTaskUpdateToKafka("taskDeleted", { id: taskId, createdBy: { id: task.createdBy.id } }, previousData);
 
             return res.status(200).json({ data: null, message: "Task deleted successfully" });
