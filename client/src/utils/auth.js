@@ -9,15 +9,13 @@ export function withAuth(Component) {
     const router = useRouter();
 
     useEffect(() => {
-      if (authData === null) return;  // no redirection when loading
-
       if (!authData?.user) {
         router.push('/login');
       }
     }, [authData, router]);
 
-    if (authData === null) {
-      return <div>Loading...</div>;  // showing loading till data loads
+    if (!authData?.user) {
+      return <div>Loading...</div>;   // showing loading till data loads
     }
 
     return <Component {...props} />;
