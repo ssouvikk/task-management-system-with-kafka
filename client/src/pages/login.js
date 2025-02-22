@@ -8,17 +8,17 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 const Login = () => {
-    const { authData: { user }, setAuthData } = useContext(AuthContext);
+    const { authData, setAuthData } = useContext(AuthContext);
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     useEffect(() => {
-        if (user && user.token) {
+        if (authData?.user) {
             router.push('/');
         }
-    }, [user, router]);
+    }, [authData, router]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -39,23 +39,13 @@ const Login = () => {
             }
         } catch (err) {
             console.error('Login Error:', err);
-            if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
-            } else {
-                setError('There was a problem connecting to the server');
-            }
+            setError(err.response?.data?.message || 'There was a problem connecting to the server');
         }
     };
 
     return (
-        <div
-            className="min-h-screen flex items-center justify-center bg-gray-50 px-4"
-            style={{ backgroundColor: '#b2cdee' }}
-        >
-            <form
-                onSubmit={handleLogin}
-                className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
-            >
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4" style={{ backgroundColor: '#b2cdee' }}>
+            <form onSubmit={handleLogin} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
                 <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Login</h2>
                 {error && <div className="mb-4 text-red-500 text-center">{error}</div>}
                 <div className="mb-4">

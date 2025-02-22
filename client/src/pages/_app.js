@@ -17,24 +17,33 @@ const queryClient = new QueryClient({
 })
 
 function MyApp({ Component, pageProps }) {
-  const [authData, setAuthData] = useState({})
+  const [authData, setAuthData] = useState(null)
 
-  useEffect(() => {
+  const loadUser = async () => {
     if (typeof window !== 'undefined') {
       try {
         const accessToken = localStorage.getItem('accessToken')
         const userData = localStorage.getItem('user')
-        if (accessToken && userData) setAuthData({ accessToken, user: JSON.parse(userData) })
-        else {
-          setAuthData({})
+        if (accessToken && userData) {
+          setAuthData({ accessToken, user: JSON.parse(userData) })
+        } else {
+          setAuthData(null)
           localStorage.clear()
         }
       } catch (error) {
         localStorage.clear()
-        setAuthData({})
+        setAuthData(null)
       }
     }
+  }
+
+  useEffect(() => {
+    loadUser()
   }, [])
+
+  if (authData === null) {
+    return <div>Loading...</div>
+  }
 
   const getLayout = Component.noLayout ? (page) => page : (page) => <Layout>{page}</Layout>
 

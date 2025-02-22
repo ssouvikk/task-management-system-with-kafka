@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 const Register = () => {
-  const { authData: { user }, setAuthData } = useContext(AuthContext);
+  const { authData, setAuthData } = useContext(AuthContext);
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -17,10 +17,10 @@ const Register = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (user && user.token) {
+    if (authData?.user) {
       router.push('/');
     }
-  }, [user, router]);
+  }, [authData, router]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
