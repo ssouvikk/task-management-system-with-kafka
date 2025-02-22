@@ -4,6 +4,7 @@ import AuthContext from '../context/AuthContext'
 import NotificationContext from '../context/NotificationContext'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
+import { removeTokens } from '@/utils/tokenManager'
 
 const Navbar = () => {
     const { setAuthData } = useContext(AuthContext);
@@ -11,10 +12,9 @@ const Navbar = () => {
     const router = useRouter()
 
     const handleLogout = () => {
-        localStorage.clear()
         resetNotifications()
         setAuthData({})
-        router.push('/login')
+        removeTokens()
         toast('Logged Out successfully')
     }
 

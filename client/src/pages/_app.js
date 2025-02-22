@@ -6,8 +6,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { NotificationProvider } from '../context/NotificationContext';
 import { AuthProvider } from '../context/AuthContext';
 import Layout from '@/components/Layout';
-import { useEffect } from 'react';
 import { initializeTokens } from '@/utils/tokenManager';
+
+initializeTokens();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,10 +20,6 @@ function MyApp({ Component, pageProps }) {
   const getLayout = Component.noLayout
     ? (page) => page
     : (page) => <Layout>{page}</Layout>;
-
-  useEffect(() => {
-    initializeTokens();
-  }, []);
 
   return (
     <AuthProvider>

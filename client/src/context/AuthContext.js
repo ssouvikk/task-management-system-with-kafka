@@ -1,6 +1,5 @@
 // context/AuthContext.js
 import { createContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import axiosInstance, { updateToken } from '../utils/axiosInstance';
 import { getAccessToken } from '../utils/tokenManager';
 import Loader from '@/components/Loader';
@@ -9,7 +8,8 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [authData, setAuthData] = useState(undefined);
-    const router = useRouter();
+
+    console.log({ authData, accessToken: getAccessToken() })
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -19,9 +19,10 @@ export const AuthProvider = ({ children }) => {
                     setAuthData(null);
                     return;
                 }
+                
                 updateToken(accessToken);
                 const response = await axiosInstance.get('/api/auth/profile');
-                setAuthData({ accessToken, user: response.data.user });
+                setAuthData({ accessToken, user: response.data.data.user });
             } catch (error) {
                 console.error('Auth check failed:', error);
                 setAuthData(null);
@@ -29,11 +30,11 @@ export const AuthProvider = ({ children }) => {
             }
         };
 
-        // শুধুমাত্র একবার চালানোর জন্য, dependency array এ [] ব্যবহার করুন
+        
         if (authData === undefined) {
             checkAuth();
         }
-    }, []);  // <-- এখানে শুধুমাত্র [] ব্যবহার করছি
+    }, []);
 
     return (
         <AuthContext.Provider value={{ authData, setAuthData }}>

@@ -5,7 +5,7 @@ dotenv.config();
 
 function generateAccessToken(user) {
   const { id, email, username, role } = user
-  return jwt.sign({ id, email, username, role }, process.env.JWT_SECRET, { expiresIn: '15m' });
+  return jwt.sign({ id, email, username, role }, process.env.JWT_SECRET, { expiresIn: '1m' });
 }
 
 function generateRefreshToken(user) {

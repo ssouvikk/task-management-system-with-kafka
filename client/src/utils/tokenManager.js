@@ -20,3 +20,11 @@ export const setTokens = ({ accessToken, refreshToken }) => {
         localStorage.setItem('refreshToken', refreshToken);
     }
 };
+
+export const removeTokens = () => {
+    currentAccessToken = null;
+    currentRefreshToken = null;
+    if (typeof window !== 'undefined') {
+        localStorage.clear()
+    }
+};
