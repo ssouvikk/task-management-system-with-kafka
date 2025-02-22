@@ -9,8 +9,6 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [authData, setAuthData] = useState(undefined);
 
-    console.log({ authData, accessToken: getAccessToken() })
-
     useEffect(() => {
         const checkAuth = async () => {
             try {

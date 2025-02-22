@@ -1,9 +1,10 @@
 // src/components/TaskForm.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import Select from '@/components/ui/Select'; // Import new Select component
+import Select from '@/components/ui/Select';
+import AuthContext from '@/context/AuthContext';
 
 // Options array for priority and status
 const priorityOptions = [
@@ -19,6 +20,7 @@ const statusOptions = [
 ];
 
 const TaskForm = ({ initialData, onSubmit, onCancel }) => {
+    const { authData: { user } } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -101,16 +103,18 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
                     className='w-full'
                 />
             </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Assigned To</label>
-                <Input
-                    name="assignedTo"
-                    value={formData.assignedTo}
-                    onChange={handleChange}
-                    placeholder="Assigned User"
-                    className='w-full'
-                />
-            </div>
+            {user.role === 'admin' && (
+                <div className="mb-4">
+                    <label className="block text-gray-700 mb-2">Assigned To</label>
+                    <Input
+                        name="assignedTo"
+                        value={formData.assignedTo}
+                        onChange={handleChange}
+                        placeholder="Assigned User"
+                        className='w-full'
+                    />
+                </div>
+            )}
             <div className="flex justify-end mt-6">
                 <Button type="submit" className="mr-2">Save</Button>
                 {onCancel && (
