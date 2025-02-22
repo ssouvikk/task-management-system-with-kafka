@@ -29,20 +29,26 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
         messages: [{ key: String(task.id), value: JSON.stringify(payload) }],
     });
 
-    // Send notification to user
-    const client = connectedClients.get(task.createdBy.id);
-    if (client && client.ws.readyState === 1) {
-        client.ws.send(JSON.stringify(payload));
+    // Creator-কে নোটিফাই করা
+    const creatorClient = connectedClients.get(task.createdBy.id);
+    if (creatorClient && creatorClient.ws.readyState === 1) {
+        creatorClient.ws.send(JSON.stringify(payload));
     }
 
+    // Assignee থাকলে, তাকে নোটিফাই করা (যদি creator এর সাথে আলাদা হয়)
+    if (task.assignedTo && task.assignedTo !== task.createdBy.id) {
+        const assigneeClient = connectedClients.get(task.assignedTo);
+        if (assigneeClient && assigneeClient.ws.readyState === 1) {
+            assigneeClient.ws.send(JSON.stringify(payload));
+        }
+    }
 
-    // Send notification to all admins
+    // সকল অ্যাডমিনকে নোটিফাই করা
     connectedClients.forEach(({ ws, role }) => {
         if (role === "admin" && ws.readyState === 1) {
             ws.send(JSON.stringify({ message: "Task updated", payload }));
         }
     });
-
 };
 
 module.exports = {
@@ -65,7 +71,7 @@ module.exports = {
                 status: status || TaskStatus.TODO,
                 dueDate: dueDate ? new Date(dueDate) : null,
                 createdBy: req.user,
-                assignedTo,
+                assignedTo, // এখানে অ্যাডমিন চেক করে আগের মত set করা যাবে (এটি createTask এ admin বা user উভয়ের জন্য কাজ করতে পারে)
             });
 
             await taskRepository.save(newTask);
@@ -81,7 +87,7 @@ module.exports = {
     getTasks: async (req, res) => {
         try {
             const { priority, status, dueDate } = req.query;
-            const perPage = Math.min(Number(req.query.perPage) || 10, 100); // Maximum 100
+            const perPage = Math.min(Number(req.query.perPage) || 10, 100);
             const pageNumber = Number(req.query.pageNumber) || 1;
             const skip = (pageNumber - 1) * perPage;
 
@@ -90,12 +96,10 @@ module.exports = {
                 .createQueryBuilder("task")
                 .leftJoinAndSelect("task.createdBy", "user");
 
-            // If the user is not admin, show only their tasks
             if (req.user.role !== "admin") {
                 query.where("user.id = :userId", { userId: req.user.id });
             }
 
-            // Add additional filters
             if (priority) {
                 query.andWhere("task.priority = :priority", { priority });
             }
@@ -106,10 +110,7 @@ module.exports = {
                 query.andWhere("DATE(task.dueDate) = DATE(:dueDate)", { dueDate });
             }
 
-            // Pagination: add limit and offset
             query.skip(skip).take(perPage);
-
-            // Execute count query to get total records
             const [tasks, total] = await query.getManyAndCount();
 
             return res.status(200).json({
@@ -135,13 +136,15 @@ module.exports = {
             const taskRepository = AppDataSource.getRepository(Task);
             const task = await taskRepository.findOne({ where: { id: taskId }, relations: ["createdBy"] });
             if (!task) return res.status(404).json({ data: null, message: "Task not found" });
-            if (task.createdBy.id !== req.user.id && req.user.role !== "admin") {
-                return res.status(403).json({ data: null, message: "Not authorized to update this task" });
+            // যদি admin ইউজার এডিট করে, তাহলে assignedTo ফিল্ড আপডেট হবে
+            if (req.user.role === "admin" && assignedTo !== undefined) {
+                task.assignedTo = assignedTo;
             }
 
             const previousData = { ...task };
 
-            Object.assign(task, { title, description, priority, status, assignedTo, dueDate: dueDate ? new Date(dueDate) : null });
+            // অন্যান্য ফিল্ড আপডেট
+            Object.assign(task, { title, description, priority, status, dueDate: dueDate ? new Date(dueDate) : null });
             await taskRepository.save(task);
             await sendTaskUpdate("taskUpdated", task, previousData);
 
