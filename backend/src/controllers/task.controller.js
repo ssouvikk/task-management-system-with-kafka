@@ -5,14 +5,16 @@ const { producer } = require("../config/kafka");
 const connectedClients = require("../config/socketClients");
 
 const sendTaskUpdate = async (changeType, task, previousData = null) => {
+    // নিশ্চিত করুন যে taskId null নয়, পূর্বের ডেটা থেকেও সংগ্রহ করতে পারেন
+    const taskId = task.id || (previousData && previousData.id);
+
     const newData = changeType === "taskDeleted" ? null : {
-        id: task.id,
+        id: taskId,
         title: task.title,
         description: task.description,
         priority: task.priority,
         status: task.status,
         dueDate: task.dueDate,
-        // নতুন relation থেকে assignedUser-এর তথ্য (যদি থাকে)
         assignedUser: task.assignedUser ? {
             id: task.assignedUser.id,
             username: task.assignedUser.username,
@@ -21,8 +23,8 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
     };
 
     const payload = {
+        taskId,
         change_type: changeType,
-        taskId: task.id,
         userId: task.createdBy.id,
         previous_value: previousData,
         new_value: newData,
@@ -31,7 +33,7 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
 
     await producer.send({
         topic: 'task-updates',
-        messages: [{ key: String(task.id), value: JSON.stringify(payload) }],
+        messages: [{ key: String(taskId), value: JSON.stringify(payload) }],
     });
 
     // Creator-কে নোটিফাই করা
