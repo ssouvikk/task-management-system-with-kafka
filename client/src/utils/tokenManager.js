@@ -1,19 +1,21 @@
 // utils/tokenManager.js
-export const getAccessToken = () => {
+let currentAccessToken = null;
+let currentRefreshToken = null;
+
+// অ্যাপ শুরু হলে, localStorage থেকে ইন-মেমোরিতে টোকেন লোড করা
+export const initializeTokens = () => {
     if (typeof window !== 'undefined') {
-        return localStorage.getItem('accessToken');
+        currentAccessToken = localStorage.getItem('accessToken');
+        currentRefreshToken = localStorage.getItem('refreshToken');
     }
-    return null;
 };
 
-export const getRefreshToken = () => {
-    if (typeof window !== 'undefined') {
-        return localStorage.getItem('refreshToken');
-    }
-    return null;
-};
+export const getAccessToken = () => currentAccessToken;
+export const getRefreshToken = () => currentRefreshToken;
 
 export const setTokens = ({ accessToken, refreshToken }) => {
+    currentAccessToken = accessToken;
+    currentRefreshToken = refreshToken;
     if (typeof window !== 'undefined') {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);

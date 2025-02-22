@@ -1,15 +1,13 @@
 // utils/axiosInstance.js
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { getRefreshToken, getAccessToken, setTokens  } from '@/utils/tokenManager';
+import { getAccessToken, getRefreshToken, setTokens } from './tokenManager';
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
-instance.defaults.headers.common['Authorization'] = `Bearer ${getAccessToken()}`;
-
-// Request interceptor: টোকেন আপডেট করা হলে সেট করবো
+// Request interceptor: ইন-মেমোরি টোকেন ব্যবহার করে
 instance.interceptors.request.use(
   (config) => {
     const accessToken = getAccessToken();
@@ -52,7 +50,6 @@ instance.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-
     if (error.response?.data?.message) {
       toast.error(error.response.data.message);
     }

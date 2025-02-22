@@ -6,7 +6,7 @@ import axiosInstance from '../utils/axiosInstance';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { setTokens } from '@/utils/tokenManager';
+import { setTokens } from '../utils/tokenManager';
 
 const Login = () => {
     const { authData, setAuthData } = useContext(AuthContext);
@@ -33,7 +33,6 @@ const Login = () => {
 
                 setTokens({ accessToken, refreshToken });
                 setAuthData({ user, accessToken });
-
                 router.replace(router.query.redirect || '/');
             }
         } catch (err) {

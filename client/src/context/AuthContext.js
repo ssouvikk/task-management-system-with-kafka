@@ -14,23 +14,18 @@ export const AuthProvider = ({ children }) => {
         const checkAuth = async () => {
             try {
                 const accessToken = getAccessToken();
-
                 if (!accessToken || ['/login', '/register'].includes(router.pathname)) {
                     setAuthData(null);
                     return;
                 }
-
-                // প্রোফাইল API কল করে ব্যবহারকারী তথ্য সেট করা
                 const response = await axiosInstance.get('/api/auth/profile');
                 setAuthData({ accessToken, user: response.data.user });
-
             } catch (error) {
                 console.error('Auth check failed:', error);
                 setAuthData(null);
                 localStorage.clear();
             }
         };
-
         if (authData === undefined) {
             checkAuth();
         }
