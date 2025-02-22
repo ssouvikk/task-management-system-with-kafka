@@ -36,13 +36,13 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
         messages: [{ key: String(taskId), value: JSON.stringify(payload) }],
     });
 
-    
+
     const creatorClient = connectedClients.get(task.createdBy.id);
     if (creatorClient && creatorClient.ws.readyState === 1) {
         creatorClient.ws.send(JSON.stringify(payload));
     }
 
-    
+
     if (task.assignedUser && task.assignedUser.id !== task.createdBy.id) {
         const assigneeClient = connectedClients.get(task.assignedUser.id);
         if (assigneeClient && assigneeClient.ws.readyState === 1) {
@@ -50,9 +50,9 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
         }
     }
 
-    
-    connectedClients.forEach(({ ws, role }) => {
-        if (role === "admin" && ws.readyState === 1) {
+
+    connectedClients.forEach(({ ws, role }, key) => {
+        if (role === "admin" && key !== task.createdBy.id && ws.readyState === 1) {
             ws.send(JSON.stringify(payload));
         }
     });
