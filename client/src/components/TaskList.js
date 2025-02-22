@@ -95,7 +95,7 @@ const TaskList = ({ onEdit, onDelete }) => {
                 <td className="p-3 text-gray-700">{task.priority}</td>
                 <td className="p-3 text-gray-700">{task.status}</td>
                 <td className="p-3 text-gray-700">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}</td>
-                <td className="p-3 text-gray-700">{task.assignedTo || '-'}</td>
+                <td className="p-3 text-gray-700">{task.assignedUser?.email || '-'}</td>
                 <td className="p-3 space-x-2">
                   <Button onClick={() => onEdit(task)}>Edit</Button>
                   <Button variant="destructive" onClick={() => onDelete(task.id)}>Delete</Button>

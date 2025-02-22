@@ -32,7 +32,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Mount API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
-app.use("/api/tasks", userRoutes);
+app.use("/api/users", userRoutes);
 
 // Create HTTP server
 const server = http.createServer(app);

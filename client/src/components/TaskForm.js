@@ -5,8 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Select from '@/components/ui/Select';
 import AuthContext from '@/context/AuthContext';
+import axiosInstance from '../utils/axiosInstance';
 
-// Options array for priority and status
 const priorityOptions = [
     { value: 'Low', label: 'Low' },
     { value: 'Medium', label: 'Medium' },
@@ -27,8 +27,9 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
         priority: 'Medium',
         status: 'To Do',
         dueDate: '',
-        assignedTo: ''
+        assignedUser: ''
     });
+    const [userOptions, setUserOptions] = useState([]);
 
     useEffect(() => {
         if (initialData) {
@@ -38,10 +39,30 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
                 priority: initialData.priority,
                 status: initialData.status,
                 dueDate: initialData.dueDate ? initialData.dueDate.split('T')[0] : '',
-                assignedTo: initialData.assignedTo || ''
+                assignedUser: initialData.assignedUser ? initialData?.assignedUser?.id : ''
             });
         }
     }, [initialData]);
+
+    // শুধুমাত্র অ্যাডমিন ইউজারের জন্য ইউজার লিস্ট ফেচ করা (non-admin)
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const res = await axiosInstance.get('/api/users'); // user.routes.js-এ সংজ্ঞায়িত API
+                setUserOptions(
+                    res.data.data.map(u => ({
+                        value: u.id,
+                        label: u.username + " (" + u.email + ")"
+                    }))
+                );
+            } catch (error) {
+                console.error("Error fetching users:", error);
+            }
+        };
+        if (user?.role === "admin") {
+            fetchUsers();
+        }
+    }, [user]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -105,12 +126,12 @@ const TaskForm = ({ initialData, onSubmit, onCancel }) => {
             </div>
             {user.role === 'admin' && (
                 <div className="mb-4">
-                    <label className="block text-gray-700 mb-2">Assigned To</label>
-                    <Input
-                        name="assignedTo"
-                        value={formData.assignedTo}
+                    <label className="block text-gray-700 mb-2">Assign User</label>
+                    <Select
+                        name="assignedUser"
+                        value={formData.assignedUser}
                         onChange={handleChange}
-                        placeholder="Assigned User"
+                        options={[{ value: '', label: 'Select User' }, ...userOptions]}
                         className='w-full'
                     />
                 </div>
