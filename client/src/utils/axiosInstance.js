@@ -1,7 +1,7 @@
 // utils/axiosInstance.js
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { getRefreshToken, getAccessToken, setTokens  } from './tokenManager';
+import { getRefreshToken, getAccessToken, setTokens  } from '@/utils/tokenManager';
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
