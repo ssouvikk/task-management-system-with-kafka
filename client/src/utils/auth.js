@@ -9,9 +9,9 @@ export function withAuth(Component) {
     const router = useRouter();
 
     useEffect(() => {
-      if (authData === undefined) return; // লোডিং শেষ না হলে কিছু না করা
+      if (authData === undefined) return;
       if (!authData?.user) {
-        router.replace(`/login?redirect=${router.pathname}`);  // বর্তমান পেজ সংরক্ষণ
+        router.replace(`/login?redirect=${router.pathname}`);
       }
     }, [authData, router]);
 

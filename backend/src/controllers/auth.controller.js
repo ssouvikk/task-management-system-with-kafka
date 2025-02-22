@@ -99,4 +99,13 @@ module.exports = {
         }
     },
 
+    getProfile: (req, res) => {
+        try {
+            return res.status(200).json({ data: { user: { ...req.user, password: '' } }, message: '' });
+        } catch (error) {
+            console.error('getProfile Error:', error);
+            return res.status(403).json({ data: null, message: 'Server error' });
+        }
+    },
+
 };
