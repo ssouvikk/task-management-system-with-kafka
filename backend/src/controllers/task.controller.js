@@ -36,12 +36,10 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
         messages: [{ key: String(taskId), value: JSON.stringify(payload) }],
     });
 
-
     const creatorClient = connectedClients.get(task.createdBy.id);
     if (creatorClient && creatorClient.ws.readyState === 1) {
         creatorClient.ws.send(JSON.stringify(payload));
     }
-
 
     if (task.assignedUser && task.assignedUser.id !== task.createdBy.id) {
         const assigneeClient = connectedClients.get(task.assignedUser.id);
@@ -49,7 +47,6 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
             assigneeClient.ws.send(JSON.stringify(payload));
         }
     }
-
 
     connectedClients.forEach(({ ws, role }, key) => {
         if (role === "admin" && key !== task.createdBy.id && ws.readyState === 1) {
@@ -78,7 +75,10 @@ module.exports = {
                 status: status || TaskStatus.TODO,
                 dueDate: dueDate ? new Date(dueDate) : null,
                 createdBy: req.user,
-                assignedUser: assignedUser && req.user.role === 'admin' ? { id: assignedUser } : null,
+                // শুধুমাত্র অ্যাডমিন ইউজার assignedUser প্রদান করলে, খালি স্ট্রিং থাকলে null নতুবা ইন্টিজারে রূপান্তর
+                assignedUser: (req.user.role === 'admin' && assignedUser && assignedUser !== "")
+                    ? { id: Number(assignedUser) }
+                    : null,
             });
 
             await taskRepository.save(newTask);
@@ -148,10 +148,13 @@ module.exports = {
             const previousData = { ...task };
 
             // শুধুমাত্র অ্যাডমিন ইউজারই assignedUser আপডেট করতে পারবে
-            if (req.user.role === "admin" && assignedUser !== undefined) {
-                task.assignedUser = { id: assignedUser };
+            if (req.user.role === "admin") {
+                if (assignedUser && assignedUser !== "") {
+                    task.assignedUser = { id: Number(assignedUser) };
+                } else {
+                    task.assignedUser = null;
+                }
             }
-
 
             Object.assign(task, { title, description, priority, status, dueDate: dueDate ? new Date(dueDate) : null });
             await taskRepository.save(task);
