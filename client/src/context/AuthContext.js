@@ -1,8 +1,9 @@
 // context/AuthContext.js
 import { createContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import axiosInstance from '../utils/axiosInstance';
+import axiosInstance, { updateToken } from '../utils/axiosInstance';
 import { getAccessToken } from '../utils/tokenManager';
+import Loader from '@/components/Loader';
 
 const AuthContext = createContext();
 
@@ -14,10 +15,11 @@ export const AuthProvider = ({ children }) => {
         const checkAuth = async () => {
             try {
                 const accessToken = getAccessToken();
-                if (!accessToken || ['/login', '/register'].includes(router.pathname)) {
+                if (!accessToken) {
                     setAuthData(null);
                     return;
                 }
+                updateToken(accessToken);
                 const response = await axiosInstance.get('/api/auth/profile');
                 setAuthData({ accessToken, user: response.data.user });
             } catch (error) {
@@ -26,18 +28,16 @@ export const AuthProvider = ({ children }) => {
                 localStorage.clear();
             }
         };
+
+        // শুধুমাত্র একবার চালানোর জন্য, dependency array এ [] ব্যবহার করুন
         if (authData === undefined) {
             checkAuth();
         }
-    }, [authData]);
+    }, []);  // <-- এখানে শুধুমাত্র [] ব্যবহার করছি
 
     return (
         <AuthContext.Provider value={{ authData, setAuthData }}>
-            {authData === undefined ? (
-                <div className="h-screen flex items-center justify-center">Loading...</div>
-            ) : (
-                children
-            )}
+            {authData === undefined ? <Loader /> : children}
         </AuthContext.Provider>
     );
 };

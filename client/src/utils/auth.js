@@ -2,6 +2,7 @@
 import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AuthContext from '../context/AuthContext';
+import Loader from '@/components/Loader';
 
 export function withAuth(Component) {
   return function AuthenticatedComponent(props) {
@@ -16,7 +17,7 @@ export function withAuth(Component) {
     }, [authData, router]);
 
     if (authData === undefined || !authData?.user) {
-      return <div className="h-screen flex items-center justify-center">Loading...</div>;
+      return <Loader />;
     }
 
     return <Component {...props} />;

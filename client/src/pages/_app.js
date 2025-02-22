@@ -21,8 +21,8 @@ function MyApp({ Component, pageProps }) {
     : (page) => <Layout>{page}</Layout>;
 
   useEffect(() => {
-    initializeTokens()
-  }, [])
+    initializeTokens();
+  }, []);
 
   return (
     <AuthProvider>
