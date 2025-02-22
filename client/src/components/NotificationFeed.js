@@ -2,12 +2,13 @@
 import React, { useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
 import NotificationContext from '../context/NotificationContext';
+import { getAccessToken } from '@/utils/tokenManager';
 
 const NotificationFeed = () => {
     const { addNotification } = useContext(NotificationContext);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = getAccessToken()
         let socket;
 
         const connectSocket = () => {

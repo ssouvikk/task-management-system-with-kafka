@@ -36,13 +36,13 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
         messages: [{ key: String(taskId), value: JSON.stringify(payload) }],
     });
 
-    // Creator-কে নোটিফাই করা
+    
     const creatorClient = connectedClients.get(task.createdBy.id);
     if (creatorClient && creatorClient.ws.readyState === 1) {
         creatorClient.ws.send(JSON.stringify(payload));
     }
 
-    // Assignee থাকলে, তাকে নোটিফাই করা (যদি creator থেকে আলাদা হয়)
+    
     if (task.assignedUser && task.assignedUser.id !== task.createdBy.id) {
         const assigneeClient = connectedClients.get(task.assignedUser.id);
         if (assigneeClient && assigneeClient.ws.readyState === 1) {
@@ -50,10 +50,10 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
         }
     }
 
-    // সকল অ্যাডমিনকে নোটিফাই করা
+    
     connectedClients.forEach(({ ws, role }) => {
         if (role === "admin" && ws.readyState === 1) {
-            ws.send(JSON.stringify({ message: "Task updated", payload }));
+            ws.send(JSON.stringify(payload));
         }
     });
 };
