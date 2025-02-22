@@ -59,7 +59,7 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
 module.exports = {
     createTask: async (req, res) => {
         try {
-            const { title, description, priority, status, dueDate, assignedUserId } = req.body;
+            const { title, description, priority, status, dueDate, assignedUser } = req.body;
             if (!title) return res.status(400).json({ data: null, message: "Title is required" });
             if (priority && !Object.values(TaskPriority).includes(priority)) {
                 return res.status(400).json({ data: null, message: "Invalid priority value" });
@@ -76,7 +76,7 @@ module.exports = {
                 status: status || TaskStatus.TODO,
                 dueDate: dueDate ? new Date(dueDate) : null,
                 createdBy: req.user,
-                assignedUser: assignedUserId && req.user.role === 'admin' ? { id: assignedUserId } : null,
+                assignedUser: assignedUser && req.user.role === 'admin' ? { id: assignedUser } : null,
             });
 
             await taskRepository.save(newTask);
@@ -132,7 +132,7 @@ module.exports = {
     updateTask: async (req, res) => {
         try {
             const taskId = Number(req.params.id);
-            const { title, description, priority, status, dueDate, assignedUserId } = req.body;
+            const { title, description, priority, status, dueDate, assignedUser } = req.body;
             if (priority && !Object.values(TaskPriority).includes(priority)) {
                 return res.status(400).json({ data: null, message: "Invalid priority value" });
             }
@@ -146,8 +146,8 @@ module.exports = {
             const previousData = { ...task };
 
             // শুধুমাত্র অ্যাডমিন ইউজারই assignedUser আপডেট করতে পারবে
-            if (req.user.role === "admin" && assignedUserId !== undefined) {
-                task.assignedUser = { id: assignedUserId };
+            if (req.user.role === "admin" && assignedUser !== undefined) {
+                task.assignedUser = { id: assignedUser };
             }
 
 
