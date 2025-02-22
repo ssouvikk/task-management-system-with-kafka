@@ -6,6 +6,7 @@ import axiosInstance from '../utils/axiosInstance';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { setTokens } from '@/utils/tokenManager';
 
 const Login = () => {
     const { authData, setAuthData } = useContext(AuthContext);
@@ -30,14 +31,10 @@ const Login = () => {
             if (res.status === 200) {
                 const { accessToken, refreshToken, user } = data.data;
 
-                localStorage.setItem('user', JSON.stringify(user));
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
+                setTokens({ accessToken, refreshToken });
+                setAuthData({ user, accessToken });
 
-                setAuthData({ user, accessToken, refreshToken });
-
-                const redirectPath = router.query.redirect || '/';
-                router.replace(redirectPath);
+                router.replace(router.query.redirect || '/');
             }
         } catch (err) {
             console.error('Login Error:', err);

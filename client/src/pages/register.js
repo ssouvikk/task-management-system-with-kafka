@@ -6,6 +6,7 @@ import axiosInstance from '../utils/axiosInstance';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { setTokens } from '@/utils/tokenManager';
 
 const Register = () => {
   const { authData, setAuthData } = useContext(AuthContext);
@@ -34,12 +35,8 @@ const Register = () => {
       const data = res.data;
       if (res.status === 201) {
         const { accessToken, refreshToken, user } = data.data
-
-        localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
-
-        setAuthData({ user, accessToken, refreshToken });
+        setTokens({ accessToken, refreshToken });
+        setAuthData({ user, accessToken });
       }
     } catch (err) {
       console.error('Register Error:', err);
