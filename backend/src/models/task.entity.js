@@ -44,17 +44,19 @@ const Task = new EntitySchema({
       type: "timestamp",
       nullable: true,
     },
-    assignedTo: {
-      type: "varchar",
+    assignedUser: {
+      target: "User",
+      type: "many-to-one",
+      joinColumn: true,
       nullable: true,
     },
     createdAt: {
       type: "timestamp",
-      createDate: true, // Automatically set creation date
+      createDate: true,
     },
     updatedAt: {
       type: "timestamp",
-      updateDate: true, // Automatically set update date
+      updateDate: true,
     },
   },
   relations: {
@@ -62,8 +64,8 @@ const Task = new EntitySchema({
     createdBy: {
       target: "User",
       type: "many-to-one",
-      joinColumn: true, // Will create a foreign key column
-      onDelete: "CASCADE", // If the user is deleted, their tasks will also be deleted
+      joinColumn: true,
+      onDelete: "CASCADE",
     },
   },
 });

@@ -12,7 +12,7 @@ const User = new EntitySchema({
     },
     username: {
       type: "varchar",
-      unique: true, // Each user's username will be unique
+      unique: true,
     },
     email: {
       type: "varchar",

@@ -12,7 +12,12 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
         priority: task.priority,
         status: task.status,
         dueDate: task.dueDate,
-        assignedTo: task.assignedTo,
+        // নতুন relation থেকে assignedUser-এর তথ্য (যদি থাকে)
+        assignedUser: task.assignedUser ? {
+            id: task.assignedUser.id,
+            username: task.assignedUser.username,
+            email: task.assignedUser.email,
+        } : null,
     };
 
     const payload = {
@@ -35,9 +40,9 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
         creatorClient.ws.send(JSON.stringify(payload));
     }
 
-    // Assignee থাকলে, তাকে নোটিফাই করা (যদি creator এর সাথে আলাদা হয়)
-    if (task.assignedTo && task.assignedTo !== task.createdBy.id) {
-        const assigneeClient = connectedClients.get(task.assignedTo);
+    // Assignee থাকলে, তাকে নোটিফাই করা (যদি creator থেকে আলাদা হয়)
+    if (task.assignedUser && task.assignedUser.id !== task.createdBy.id) {
+        const assigneeClient = connectedClients.get(task.assignedUser.id);
         if (assigneeClient && assigneeClient.ws.readyState === 1) {
             assigneeClient.ws.send(JSON.stringify(payload));
         }
@@ -54,7 +59,7 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
 module.exports = {
     createTask: async (req, res) => {
         try {
-            const { title, description, priority, status, dueDate, assignedTo } = req.body;
+            const { title, description, priority, status, dueDate, assignedUserId } = req.body;
             if (!title) return res.status(400).json({ data: null, message: "Title is required" });
             if (priority && !Object.values(TaskPriority).includes(priority)) {
                 return res.status(400).json({ data: null, message: "Invalid priority value" });
@@ -71,7 +76,7 @@ module.exports = {
                 status: status || TaskStatus.TODO,
                 dueDate: dueDate ? new Date(dueDate) : null,
                 createdBy: req.user,
-                assignedTo, // এখানে অ্যাডমিন চেক করে আগের মত set করা যাবে (এটি createTask এ admin বা user উভয়ের জন্য কাজ করতে পারে)
+                assignedUser: assignedUserId && req.user.role === 'admin' ? { id: assignedUserId } : null,
             });
 
             await taskRepository.save(newTask);
@@ -94,7 +99,8 @@ module.exports = {
             const taskRepository = AppDataSource.getRepository(Task);
             const query = taskRepository
                 .createQueryBuilder("task")
-                .leftJoinAndSelect("task.createdBy", "user");
+                .leftJoinAndSelect("task.createdBy", "user")
+                .leftJoinAndSelect("task.assignedUser", "assignedUser");
 
             if (req.user.role !== "admin") {
                 query.where("user.id = :userId", { userId: req.user.id });
@@ -126,7 +132,7 @@ module.exports = {
     updateTask: async (req, res) => {
         try {
             const taskId = Number(req.params.id);
-            const { title, description, priority, status, dueDate, assignedTo } = req.body;
+            const { title, description, priority, status, dueDate, assignedUserId } = req.body;
             if (priority && !Object.values(TaskPriority).includes(priority)) {
                 return res.status(400).json({ data: null, message: "Invalid priority value" });
             }
@@ -134,16 +140,17 @@ module.exports = {
                 return res.status(400).json({ data: null, message: "Invalid status value" });
             }
             const taskRepository = AppDataSource.getRepository(Task);
-            const task = await taskRepository.findOne({ where: { id: taskId }, relations: ["createdBy"] });
+            const task = await taskRepository.findOne({ where: { id: taskId }, relations: ["createdBy", "assignedUser"] });
             if (!task) return res.status(404).json({ data: null, message: "Task not found" });
-            // যদি admin ইউজার এডিট করে, তাহলে assignedTo ফিল্ড আপডেট হবে
-            if (req.user.role === "admin" && assignedTo !== undefined) {
-                task.assignedTo = assignedTo;
-            }
 
             const previousData = { ...task };
 
-            // অন্যান্য ফিল্ড আপডেট
+            // শুধুমাত্র অ্যাডমিন ইউজারই assignedUser আপডেট করতে পারবে
+            if (req.user.role === "admin" && assignedUserId !== undefined) {
+                task.assignedUser = { id: assignedUserId };
+            }
+
+
             Object.assign(task, { title, description, priority, status, dueDate: dueDate ? new Date(dueDate) : null });
             await taskRepository.save(task);
             await sendTaskUpdate("taskUpdated", task, previousData);
