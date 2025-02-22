@@ -6,15 +6,14 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 
 const Navbar = () => {
-    const { setUser } = useContext(AuthContext)
+    const { setAuthData } = useContext(AuthContext);
     const { notifications, resetNotifications } = useContext(NotificationContext)
     const router = useRouter()
 
     const handleLogout = () => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('refreshToken')
+        localStorage.clear()
         resetNotifications()
-        setUser(null)
+        setAuthData({})
         router.push('/login')
         toast('Logged Out successfully')
     }

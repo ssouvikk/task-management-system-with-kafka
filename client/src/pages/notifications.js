@@ -2,6 +2,7 @@
 import React, { useContext } from 'react'
 import NotificationContext from '../context/NotificationContext'
 import { Button } from '@/components/ui/button'
+import { withAuth } from '@/utils/auth'
 
 const Notifications = () => {
     const { notifications, resetNotifications } = useContext(NotificationContext)
@@ -35,4 +36,4 @@ const Notifications = () => {
     )
 }
 
-export default Notifications
+export default withAuth(Notifications)

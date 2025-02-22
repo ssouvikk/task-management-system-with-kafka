@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 const Register = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const { authData: { user }, setAuthData } = useContext(AuthContext);
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -33,10 +33,13 @@ const Register = () => {
       const res = await axiosInstance.post('/api/auth/signup', { username, email, password });
       const data = res.data;
       if (res.status === 201) {
-        localStorage.setItem('token', data.data.accessToken);
-        localStorage.setItem('refreshToken', data.data.refreshToken);
-        setUser({ token: data.data.accessToken });
-        router.push('/');
+        const { accessToken, refreshToken, user } = data.data
+
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+
+        setAuthData({ user, accessToken, refreshToken });
       }
     } catch (err) {
       console.error('Register Error:', err);

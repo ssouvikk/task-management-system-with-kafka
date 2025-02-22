@@ -36,7 +36,7 @@ module.exports = {
             const refreshToken = generateRefreshToken(newUser);
 
             return res.status(201).json({
-                data: { accessToken, refreshToken },
+                data: { accessToken, refreshToken, user: { ...newUser, password: '' } },
                 message: 'Registration successful'
             });
         } catch (error) {
@@ -67,7 +67,7 @@ module.exports = {
             const refreshToken = generateRefreshToken(user);
 
             return res.status(200).json({
-                data: { accessToken, refreshToken },
+                data: { accessToken, refreshToken, user: { ...user, password: '' } },
                 message: 'Login successful'
             });
         } catch (error) {

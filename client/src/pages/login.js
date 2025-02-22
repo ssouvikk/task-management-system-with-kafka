@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 const Login = () => {
-    const { user, setUser } = useContext(AuthContext);
+    const { authData: { user }, setAuthData } = useContext(AuthContext);
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -27,9 +27,14 @@ const Login = () => {
             const res = await axiosInstance.post('/api/auth/login', { email, password });
             const data = res.data;
             if (res.status === 200) {
-                localStorage.setItem('token', data.data.accessToken);
-                localStorage.setItem('refreshToken', data.data.refreshToken);
-                setUser({ token: data.data.accessToken });
+                const { accessToken, refreshToken, user } = data.data
+
+                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+
+                setAuthData({ user, accessToken, refreshToken });
+
                 router.push('/');
             }
         } catch (err) {
