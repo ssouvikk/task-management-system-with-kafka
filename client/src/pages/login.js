@@ -1,7 +1,7 @@
 // pages/login.js
 import { useState, useContext, useEffect } from 'react';
-import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
+import AuthContext from '../context/AuthContext';
 import axiosInstance from '../utils/axiosInstance';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,8 @@ const Login = () => {
 
     useEffect(() => {
         if (authData?.user) {
-            router.push('/');
+            const redirectPath = router.query.redirect || '/';
+            router.replace(redirectPath);
         }
     }, [authData, router]);
 
@@ -27,7 +28,7 @@ const Login = () => {
             const res = await axiosInstance.post('/api/auth/login', { email, password });
             const data = res.data;
             if (res.status === 200) {
-                const { accessToken, refreshToken, user } = data.data
+                const { accessToken, refreshToken, user } = data.data;
 
                 localStorage.setItem('user', JSON.stringify(user));
                 localStorage.setItem('accessToken', accessToken);
@@ -35,7 +36,8 @@ const Login = () => {
 
                 setAuthData({ user, accessToken, refreshToken });
 
-                router.push('/');
+                const redirectPath = router.query.redirect || '/';
+                router.replace(redirectPath);
             }
         } catch (err) {
             console.error('Login Error:', err);

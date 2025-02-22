@@ -17,7 +17,7 @@ const queryClient = new QueryClient({
 })
 
 function MyApp({ Component, pageProps }) {
-  const [authData, setAuthData] = useState({})
+  const [authData, setAuthData] = useState(undefined)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -28,16 +28,19 @@ function MyApp({ Component, pageProps }) {
         if (accessToken && userData) {
           setAuthData({ accessToken, user: JSON.parse(userData) })
         } else {
-          setAuthData({})
+          setAuthData(null)
           localStorage.clear()
         }
       } catch (error) {
-        setAuthData({})
+        setAuthData(null)
         localStorage.clear()
       }
     }
   }, [])
 
+  if (authData === undefined) {
+    return <div className="h-screen flex items-center justify-center">Loading...</div>
+  }
 
   const getLayout = Component.noLayout ? (page) => page : (page) => <Layout>{page}</Layout>
 

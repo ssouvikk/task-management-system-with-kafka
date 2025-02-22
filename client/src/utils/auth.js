@@ -1,7 +1,7 @@
 // utils/auth.js
 import { useContext, useEffect } from 'react';
-import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
+import AuthContext from '../context/AuthContext';
 
 export function withAuth(Component) {
   return function AuthenticatedComponent(props) {
@@ -9,13 +9,14 @@ export function withAuth(Component) {
     const router = useRouter();
 
     useEffect(() => {
+      if (authData === undefined) return; // লোডিং শেষ না হলে কিছু না করা
       if (!authData?.user) {
-        router.push('/login');
+        router.replace(`/login?redirect=${router.pathname}`);  // বর্তমান পেজ সংরক্ষণ
       }
     }, [authData, router]);
 
-    if (!authData?.user) {
-      return <div>Loading...</div>;   // showing loading till data loads
+    if (authData === undefined || !authData?.user) {
+      return <div className="h-screen flex items-center justify-center">Loading...</div>;
     }
 
     return <Component {...props} />;
