@@ -59,7 +59,7 @@ wss.on("connection", (ws, req) => {
   }
 
   // Store the connection in an in-memory map using user's id
-  connectedClients.set(user.id, ws);
+  connectedClients.set(user.id, { ws, role: user.role });
   console.log(`User ${user.id} connected via WebSocket.`);
 
   ws.on("close", () => {

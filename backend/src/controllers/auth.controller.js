@@ -32,9 +32,8 @@ module.exports = {
             await userRepository.save(newUser);
 
             // Generate JWT tokens
-            const tokenPayload = { id: newUser.id, email: newUser.email, username };
-            const accessToken = generateAccessToken(tokenPayload);
-            const refreshToken = generateRefreshToken(tokenPayload);
+            const accessToken = generateAccessToken(newUser);
+            const refreshToken = generateRefreshToken(newUser);
 
             return res.status(201).json({
                 data: { accessToken, refreshToken },
@@ -64,9 +63,8 @@ module.exports = {
                 return res.status(400).json({ data: null, message: 'Invalid credentials' });
             }
 
-            const tokenPayload = { id: user.id, email: user.email };
-            const accessToken = generateAccessToken(tokenPayload);
-            const refreshToken = generateRefreshToken(tokenPayload);
+            const accessToken = generateAccessToken(user);
+            const refreshToken = generateRefreshToken(user);
 
             return res.status(200).json({
                 data: { accessToken, refreshToken },

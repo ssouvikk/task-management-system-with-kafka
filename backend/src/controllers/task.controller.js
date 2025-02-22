@@ -29,10 +29,20 @@ const sendTaskUpdate = async (changeType, task, previousData = null) => {
         messages: [{ key: String(task.id), value: JSON.stringify(payload) }],
     });
 
+    // Send notification to user
     const client = connectedClients.get(task.createdBy.id);
-    if (client && client.readyState === 1) {
-        client.send(JSON.stringify(payload));
+    if (client && client.ws.readyState === 1) {
+        client.ws.send(JSON.stringify(payload));
     }
+
+
+    // Send notification to all admins
+    connectedClients.forEach(({ ws, role }) => {
+        if (role === "admin" && ws.readyState === 1) {
+            ws.send(JSON.stringify({ message: "Task updated", payload }));
+        }
+    });
+
 };
 
 module.exports = {
@@ -121,7 +131,7 @@ module.exports = {
             }
             if (status && !Object.values(TaskStatus).includes(status)) {
                 return res.status(400).json({ data: null, message: "Invalid status value" });
-            } 
+            }
             const taskRepository = AppDataSource.getRepository(Task);
             const task = await taskRepository.findOne({ where: { id: taskId }, relations: ["createdBy"] });
             if (!task) return res.status(404).json({ data: null, message: "Task not found" });
