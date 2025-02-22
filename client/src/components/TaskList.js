@@ -32,12 +32,11 @@ const perPageOptions = [
 // Function to fetch tasks from the API
 const fetchTasks = async (filters) => {
   const { data } = await axiosInstance.get('/api/tasks', { params: filters });
-  // The API response contains data: { tasks, total, pageNumber, perPage }
   return data.data;
 };
 
 const TaskList = ({ onEdit, onDelete }) => {
-  const { notifications } = useContext(NotificationContext)
+  const { notifications } = useContext(NotificationContext);
   const [filters, setFilters] = useState({
     priority: '',
     status: '',
@@ -67,18 +66,17 @@ const TaskList = ({ onEdit, onDelete }) => {
 
   const handlePerPageChange = (e) => {
     setPerPage(Number(e.target.value));
-    // When perPage changes, start from page 1
     setFilters({ ...filters, pageNumber: 1 });
   };
 
   useEffect(() => {
-    refetch()
-  }, [notifications])
+    refetch();
+  }, [notifications]);
 
   return (
     <div className="mt-6">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Task List</h2>
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex flex-wrap md:flex-nowrap gap-2 mb-6 items-center">
         <Select
           name="priority"
           value={filters.priority}
@@ -99,7 +97,6 @@ const TaskList = ({ onEdit, onDelete }) => {
           placeholder="Due Date"
           className="border p-2 rounded"
         />
-        <Button onClick={refetch}>Filter</Button>
       </div>
 
       <div className="overflow-x-auto">
@@ -122,9 +119,7 @@ const TaskList = ({ onEdit, onDelete }) => {
                 <td className="p-3 text-gray-700">{task.description}</td>
                 <td className="p-3 text-gray-700">{task.priority}</td>
                 <td className="p-3 text-gray-700">{task.status}</td>
-                <td className="p-3 text-gray-700">
-                  {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}
-                </td>
+                <td className="p-3 text-gray-700">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}</td>
                 <td className="p-3 text-gray-700">{task.assignedTo || '-'}</td>
                 <td className="p-3 space-x-2">
                   <Button onClick={() => onEdit(task)}>Edit</Button>
