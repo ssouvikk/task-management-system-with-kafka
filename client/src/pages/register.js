@@ -2,7 +2,7 @@
 import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useRouter } from 'next/router';
-import axiosInstance from '../utils/axiosInstance';
+import axiosInstance, { updateToken } from '../utils/axiosInstance';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,7 @@ const Register = () => {
       const data = res.data;
       if (res.status === 201) {
         const { accessToken, refreshToken, user } = data.data
+        updateToken(accessToken)
         setTokens({ accessToken, refreshToken });
         setAuthData({ user, accessToken });
       }

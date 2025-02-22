@@ -7,7 +7,6 @@ const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
-
 instance.interceptors.request.use(
   (config) => {
     return config;
@@ -35,8 +34,9 @@ instance.interceptors.response.use(
         if (res.status === 200) {
           const { accessToken, refreshToken } = res.data.data;
           setTokens({ accessToken, refreshToken });
-          // Update axios default header once new token is received
-          instance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+          // Update default header for future requests
+          updateToken(accessToken);
+          // Update current request header for immediate retry
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           return axios(originalRequest);
         }
@@ -54,5 +54,9 @@ instance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const updateToken = (token) => {
+  instance.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
 
 export default instance;
