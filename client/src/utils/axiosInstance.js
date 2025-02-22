@@ -1,19 +1,15 @@
 // utils/axiosInstance.js
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { getAccessToken, getRefreshToken, setTokens } from './tokenManager';
+import { getRefreshToken, setTokens } from './tokenManager';
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
-// Request interceptor: ইন-মেমোরি টোকেন ব্যবহার করে
+
 instance.interceptors.request.use(
   (config) => {
-    const accessToken = getAccessToken();
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
     return config;
   },
   (error) => Promise.reject(error)
@@ -32,13 +28,15 @@ instance.interceptors.response.use(
     if (error.response?.status === 403 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh-token`, {
-          token: getRefreshToken(),
-        });
-
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh-token`,
+          { token: getRefreshToken() }
+        );
         if (res.status === 200) {
           const { accessToken, refreshToken } = res.data.data;
           setTokens({ accessToken, refreshToken });
+          // Update axios default header once new token is received
+          instance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           return axios(originalRequest);
         }

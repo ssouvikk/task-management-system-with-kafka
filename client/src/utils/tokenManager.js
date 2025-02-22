@@ -1,12 +1,16 @@
 // utils/tokenManager.js
+import axiosInstance from './axiosInstance';
+
 let currentAccessToken = null;
 let currentRefreshToken = null;
 
-// অ্যাপ শুরু হলে, localStorage থেকে ইন-মেমোরিতে টোকেন লোড করা
 export const initializeTokens = () => {
     if (typeof window !== 'undefined') {
         currentAccessToken = localStorage.getItem('accessToken');
         currentRefreshToken = localStorage.getItem('refreshToken');
+        if (currentAccessToken) {
+            axiosInstance.defaults.headers.common.Authorization = `Bearer ${currentAccessToken}`;
+        }
     }
 };
 
@@ -19,5 +23,6 @@ export const setTokens = ({ accessToken, refreshToken }) => {
     if (typeof window !== 'undefined') {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
+        axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
     }
 };
