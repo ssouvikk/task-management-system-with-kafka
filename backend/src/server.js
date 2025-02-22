@@ -15,6 +15,7 @@ const startConsumer = require("./services/taskConsumer");
 const connectedClients = require("./config/socketClients");
 const authRoutes = require("./routes/auth.routes"); // Authentication routes
 const taskRoutes = require("./routes/task.routes"); // Task related routes
+const userRoutes = require("./routes/user.routes"); // Task related routes
 const { AppDataSource } = require("./config/db");
 
 // Create Express app
@@ -30,7 +31,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Mount API routes
 app.use("/api/auth", authRoutes);
-app.use("/api/tasks", taskRoutes); // Task related API (if needed)
+app.use("/api/tasks", taskRoutes);
+app.use("/api/tasks", userRoutes);
 
 // Create HTTP server
 const server = http.createServer(app);
