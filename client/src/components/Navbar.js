@@ -7,11 +7,13 @@ import { toast } from 'react-toastify'
 
 const Navbar = () => {
     const { setUser } = useContext(AuthContext)
-    const { notifications } = useContext(NotificationContext)
+    const { notifications, resetNotifications } = useContext(NotificationContext)
     const router = useRouter()
 
     const handleLogout = () => {
         localStorage.removeItem('token')
+        localStorage.removeItem('refreshToken')
+        resetNotifications()
         setUser(null)
         router.push('/login')
         toast('Logged Out successfully')
