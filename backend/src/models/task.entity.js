@@ -44,12 +44,7 @@ const Task = new EntitySchema({
       type: "timestamp",
       nullable: true,
     },
-    assignedUser: {
-      target: "User",
-      type: "many-to-one",
-      joinColumn: true,
-      nullable: true,
-    },
+    // assignedUser ফিল্ডটি এখন "relations" এ থাকবে, "columns" এ নয়
     createdAt: {
       type: "timestamp",
       createDate: true,
@@ -60,12 +55,19 @@ const Task = new EntitySchema({
     },
   },
   relations: {
-    // The task's creator is related to the User entity
+    // Task-এর creator relation
     createdBy: {
       target: "User",
       type: "many-to-one",
       joinColumn: true,
       onDelete: "CASCADE",
+    },
+    // assignedUser relation: Task কে যেই ইউজারকে অ্যাসাইন করা হয়েছে, তা নির্দেশ করে
+    assignedUser: {
+      target: "User",
+      type: "many-to-one",
+      joinColumn: true,
+      nullable: true,
     },
   },
 });
